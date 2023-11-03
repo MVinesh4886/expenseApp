@@ -61,9 +61,11 @@
             userDetails
           );
           console.log(response.data);
-          response.data.success === true
-            ? response.data.message
-            : alert("User already registered");
+          if (response.data.success === false) {
+            return alert(response.data.message);
+          } else {
+            return alert(response.data.message);
+          }
         } catch (error) {
           console.log(error);
           alert("Request failed with status code 400");
