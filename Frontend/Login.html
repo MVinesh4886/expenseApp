@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Login</title>
+  </head>
+  <body>
+    <form onsubmit="SubmitHandler(event)">
+      <div>
+        <label for="email">EmailId:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter email"
+          required
+        />
+      </div>
+      <div>
+        <label for="password">Pswrd:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter Password"
+          required
+        />
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      async function SubmitHandler(event) {
+        event.preventDefault();
+        const emailId = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        // console.log({
+        //   name,
+        //   email,
+        //   password,
+        // });
+
+        const userDetails = {
+          emailId,
+          password,
+        };
+
+        try {
+          const response = await axios.post(
+            "http://localhost:8000/login",
+            userDetails
+          );
+          console.log(response);
+          if (response.data.message === "User already exists")
+            return alert("User already exists");
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    </script>
+  </body>
+</html>
