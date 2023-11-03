@@ -1,13 +1,13 @@
 const express = require("express");
 const userModel = require("../model/userModel");
 const userRouter = express.Router();
-
+// Register User route
 userRouter.post("/registerUser", async (req, res) => {
   const { name, emailId, password } = req.body;
   try {
-    const existingUser = await userModel.findOne({ emailId });
+    const existingUser = await userModel.findOne({ where: { emailId } });
     if (existingUser) {
-      return res.status(200).json({
+      return res.status(400).json({
         success: false,
         message: "User already exists",
       });
@@ -15,20 +15,23 @@ userRouter.post("/registerUser", async (req, res) => {
 
     const createUser = await userModel.create({ name, emailId, password });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "User registered successfully",
       data: createUser,
     });
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 
 userRouter.post("/login", async (req, res) => {
-  const { emailId } = req.body;
+  const { emailId, password } = req.body;
   try {
-    const existingUser = await userModel.findOne({ emailId });
+    const existingUser = await userModel.findOne({
+      where: { emailId, password },
+    });
     if (existingUser) {
       return res.status(200).json({
         success: true,

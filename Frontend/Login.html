@@ -6,7 +6,7 @@
     <title>Expense Login</title>
   </head>
   <body>
-    <form onsubmit="SubmitHandler(event)">
+    <form onsubmit="loginUser(event)">
       <div>
         <label for="email">EmailId:</label>
         <input
@@ -28,11 +28,11 @@
         />
       </div>
       <a href="./Expense.html">SignUp</a>
-      <button type="submit">Login</button>
+      <button type="submit" id="loginBtn">Login</button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      async function SubmitHandler(event) {
+      async function loginUser(event) {
         event.preventDefault();
         const emailId = document.getElementById("email").value;
         const password = document.getElementById("password").value;
@@ -55,11 +55,12 @@
           console.log(response.data);
           if (response.data.success === false) {
             return alert(response.data.message);
-          } else if (response.data.success === true) {
+          } else {
             return alert(response.data.message);
           }
         } catch (error) {
           console.log(error);
+          alert("Request failed with status code 400");
         }
       }
     </script>

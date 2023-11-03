@@ -6,7 +6,7 @@
     <title>Expense Register</title>
   </head>
   <body>
-    <form onsubmit="SubmitHandler(event)">
+    <form onsubmit="registerUser(event)">
       <div>
         <label for="name">Name:</label>
         <input
@@ -39,11 +39,11 @@
         />
       </div>
       <a href="./Login.html">Login</a>
-      <button type="submit">Register</button>
+      <button type="submit" id="registerBtn">Register</button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      async function SubmitHandler(event) {
+      async function registerUser(event) {
         event.preventDefault();
         const name = document.getElementById("name").value;
         const emailId = document.getElementById("email").value;
@@ -61,13 +61,12 @@
             userDetails
           );
           console.log(response.data);
-          if (response.data.success === false) {
-            return alert(response.data.message);
-          } else if (response.data.success === true) {
-            return alert(response.data.message);
-          }
+          response.data.success === true
+            ? response.data.message
+            : alert("User already registered");
         } catch (error) {
           console.log(error);
+          alert("Request failed with status code 400");
         }
       }
     </script>
