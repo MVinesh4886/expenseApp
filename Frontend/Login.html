@@ -27,7 +27,7 @@
           required
         />
       </div>
-
+      <a href="./Expense.html">SignUp</a>
       <button type="submit">Login</button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -52,9 +52,12 @@
             "http://localhost:8000/login",
             userDetails
           );
-          console.log(response);
-          if (response.data.message === "User already exists")
-            return alert("User already exists");
+          console.log(response.data);
+          if (response.data.success === false) {
+            return alert(response.data.message);
+          } else if (response.data.success === true) {
+            return alert(response.data.message);
+          }
         } catch (error) {
           console.log(error);
         }

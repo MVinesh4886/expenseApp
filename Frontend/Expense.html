@@ -48,11 +48,6 @@
         const name = document.getElementById("name").value;
         const emailId = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        // console.log({
-        //   name,
-        //   email,
-        //   password,
-        // });
 
         const userDetails = {
           name,
@@ -65,9 +60,12 @@
             "http://localhost:8000/registerUser",
             userDetails
           );
-          console.log(response);
-          if (response.data.message === "User already exists")
-            return alert("User already exists");
+          console.log(response.data);
+          if (response.data.success === false) {
+            return alert(response.data.message);
+          } else if (response.data.success === true) {
+            return alert(response.data.message);
+          }
         } catch (error) {
           console.log(error);
         }
