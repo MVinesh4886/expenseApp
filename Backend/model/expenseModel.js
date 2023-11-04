@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
+const userModel = require("./userModel");
 
 const { DataTypes } = Sequelize;
 
@@ -16,6 +17,14 @@ const expenseModel = db.define("expense-tracker", {
     type: DataTypes.STRING,
     enum: ["Food", "Electricity", "Fuel", "Recharge"],
     allowNull: false,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: userModel,
+      key: "id",
+    },
   },
 });
 

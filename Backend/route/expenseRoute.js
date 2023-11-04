@@ -5,10 +5,12 @@ const expenseRouter = express.Router();
 expenseRouter.post("/expense/create", async (req, res) => {
   try {
     const { amount, description, category } = req.body;
+    const userId = req.user.id;
     const newTracker = await expenseModel.create({
       amount,
       description,
       category,
+      userId,
     });
     console.log(newTracker);
     res.status(200).json({
