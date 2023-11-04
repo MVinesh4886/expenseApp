@@ -1,8 +1,11 @@
 const express = require("express");
 require("./model/userModel");
+require("./model/expenseModel");
 const db = require("./config/database");
 const userRouter = require("./route/userRoute");
+const expenseRouter = require("./route/expenseRoute");
 const cors = require("cors");
+
 const app = express();
 
 app.use(express.json());
@@ -13,6 +16,7 @@ app.use(
   })
 );
 
+app.use(expenseRouter);
 app.use(userRouter);
 db.sync()
   .then((result) => {
