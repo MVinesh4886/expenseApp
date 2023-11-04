@@ -3,10 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Login</title>
+    <title>Expense Register</title>
   </head>
   <body>
-    <form onsubmit="loginUser(event)">
+    <form onsubmit="registerUser(event)">
+      <div>
+        <label for="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter name"
+          required
+        />
+      </div>
+
       <div>
         <label for="email">EmailId:</label>
         <input
@@ -27,40 +38,37 @@
           required
         />
       </div>
-      <a href="./Expense.html">SignUp</a>
-      <button type="submit" id="loginBtn">Login</button>
+      <a href="./Login.html">Login</a>
+      <button type="submit" id="registerBtn">Register</button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      async function loginUser(event) {
+      async function registerUser(event) {
         event.preventDefault();
+        const name = document.getElementById("name").value;
         const emailId = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        // console.log({
-        //   name,
-        //   email,
-        //   password,
-        // });
 
         const userDetails = {
+          name,
           emailId,
           password,
         };
 
         try {
           const response = await axios.post(
-            "http://localhost:8000/login",
+            "http://localhost:8000/registerUser",
             userDetails
           );
           console.log(response.data);
           if (response.data.success === false) {
             return alert(response.data.message);
           } else {
-            window.location.href = "./Expense.html";
+            return alert(response.data.message);
           }
         } catch (error) {
           console.log(error);
-          alert("Invalid login Credentials");
+          alert("Request failed with status code 400");
         }
       }
     </script>

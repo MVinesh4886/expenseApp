@@ -1,76 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Register</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
+    <title>Expense tracker</title>
   </head>
   <body>
-    <form onsubmit="registerUser(event)">
-      <div>
-        <label for="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          placeholder="Enter name"
-          required
-        />
-      </div>
+    <h1 style="text-align: center">Expense Tracker</h1>
+    <div>
+      <label for="expenseAmount">Choose Expense Amount:</label>
+      <input type="number" max="1000" min="1" id="expenseAmount" />
 
-      <div>
-        <label for="email">EmailId:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Enter email"
-          required
-        />
-      </div>
-      <div>
-        <label for="password">Pswrd:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter Password"
-          required
-        />
-      </div>
-      <a href="./Login.html">Login</a>
-      <button type="submit" id="registerBtn">Register</button>
-    </form>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-      async function registerUser(event) {
-        event.preventDefault();
-        const name = document.getElementById("name").value;
-        const emailId = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+      <label for="description">Choose Description:</label>
+      <input type="text" id="description" />
 
-        const userDetails = {
-          name,
-          emailId,
-          password,
-        };
+      <label for="category">Choose Category:</label>
+      <select id="category">
+        <option>Food</option>
+        <option>Fuel</option>
+        <option>Electricity</option>
+        <option>Recharge</option>
+      </select>
 
-        try {
-          const response = await axios.post(
-            "http://localhost:8000/registerUser",
-            userDetails
-          );
-          console.log(response.data);
-          if (response.data.success === false) {
-            return alert(response.data.message);
-          } else {
-            return alert(response.data.message);
-          }
-        } catch (error) {
-          console.log(error);
-          alert("Request failed with status code 400");
-        }
-      }
-    </script>
+      <button id="addExpense">Add Expense</button>
+      <ul id="expenseList"></ul>
+    </div>
+    <script src="./expense.js"></script>
   </body>
 </html>
