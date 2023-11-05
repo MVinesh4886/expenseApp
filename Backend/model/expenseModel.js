@@ -4,7 +4,7 @@ const userModel = require("./userModel");
 
 const { DataTypes } = Sequelize;
 
-const expenseModel = db.define("expense-tracker", {
+const expenseModel = db.define("expense", {
   amount: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -15,17 +15,18 @@ const expenseModel = db.define("expense-tracker", {
   },
   category: {
     type: DataTypes.STRING,
-    enum: ["Food", "Electricity", "Fuel", "Recharge"],
     allowNull: false,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: userModel,
-      key: "id",
-    },
   },
 });
+
+expenseModel.associate = (models) => {
+  expenseModel.belongsTo(models.userModel, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    onDelete: "cascade",
+  });
+};
 
 module.exports = expenseModel;

@@ -37,6 +37,7 @@ userRouter.post("/registerUser", async (req, res) => {
 // Login route
 userRouter.post("/login", async (req, res) => {
   const { emailId, password } = req.body;
+
   try {
     const existingUser = await userModel.findOne({
       where: { emailId },
@@ -52,6 +53,7 @@ userRouter.post("/login", async (req, res) => {
           message: "User LoggedIn Successfully",
           emailId: existingUser.emailId,
           password: existingUser.password,
+          userId: existingUser.id,
         });
       }
     }
@@ -64,9 +66,39 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
+// Login route to fetch single user
+// userRouter.get("/login/:id", async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const user = await userModel.findbyPk(id);
+//     res.json(user);
+//     // return res
+//     //   .status(400)
+//     //   .json({ success: false, message: "Invalid login credentials" });
+//   } catch (error) {
+//     console.log(error.message);
+//     // res.status(500).json({ success: false, message: "Internal server error" });
+//     res.json({ message: "Internal server error" });
+//   }
+// });
+
 userRouter.get("/registerUser", async (req, res) => {
   try {
     const getUser = await userModel.findAll();
+    res.status(200).json({
+      success: true,
+      message: "users fetched successfully",
+      data: getUser,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+userRouter.get("/registerUser/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const getUser = await userModel.findByPk(id);
     res.status(200).json({
       success: true,
       message: "users fetched successfully",

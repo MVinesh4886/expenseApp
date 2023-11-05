@@ -19,7 +19,6 @@ app.use(
 app.use(expenseRouter);
 app.use(userRouter);
 
-userModel.hasMany(expenseModel, { foreignKey: "userId" });
 expenseModel.belongsTo(userModel, { foreignKey: "userId" });
 
 db.sync()

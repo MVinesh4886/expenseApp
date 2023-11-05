@@ -27,8 +27,10 @@
           required
         />
       </div>
-      <a href="./Expense.html">SignUp</a>
-      <button type="submit" id="loginBtn">Login</button>
+
+      <button type="submit" id="loginBtn">
+        Login <a href="./Expense.html"></a>
+      </button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -36,26 +38,25 @@
         event.preventDefault();
         const emailId = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        // console.log({
-        //   name,
-        //   email,
-        //   password,
-        // });
-
-        const userDetails = {
-          emailId,
-          password,
-        };
 
         try {
-          const response = await axios.post(
-            "http://localhost:8000/login",
-            userDetails
-          );
+          const response = await axios.post("http://localhost:8000/login", {
+            emailId,
+            password,
+          });
+
           console.log(response.data);
           if (response.data.success === false) {
             return alert(response.data.message);
           } else {
+            const userDetails = {
+              emailId: response.data.emailId,
+              password: response.data.password,
+              userId: response.data.userId,
+            };
+            // Store user details in local storage
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
+            console.log("userId:", userDetails.userId); // Log the userId in the console
             window.location.href = "./Expense.html";
           }
         } catch (error) {

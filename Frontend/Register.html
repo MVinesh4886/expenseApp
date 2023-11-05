@@ -49,16 +49,14 @@
         const emailId = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
-        const userDetails = {
-          name,
-          emailId,
-          password,
-        };
-
         try {
           const response = await axios.post(
             "http://localhost:8000/registerUser",
-            userDetails
+            {
+              name,
+              emailId,
+              password,
+            }
           );
           console.log(response.data);
           if (response.data.success === false) {

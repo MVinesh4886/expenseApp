@@ -1,11 +1,12 @@
 const express = require("express");
 const expenseModel = require("../model/expenseModel");
+
 const expenseRouter = express.Router();
 
 expenseRouter.post("/expense/create", async (req, res) => {
   try {
     const { amount, description, category } = req.body;
-    const userId = req.user.id;
+    const userId = req.body.userId; // Assuming the userId is passed as a parameter
     const newTracker = await expenseModel.create({
       amount,
       description,
@@ -38,14 +39,12 @@ expenseRouter.get("/expense/get", async (req, res) => {
 
 expenseRouter.get("/expense/getSingle/:id", async (req, res) => {
   try {
-    const tracker = await expenseModel.findByPk(req.params.id);
+    const userId = req.body.userId;
+    const tracker = await expenseModel.findAll({ where: { userId: userId } });
     if (!tracker) {
       return res.status(404).json({ message: "tracker not found" });
     }
-    res.status(200).json({
-      success: true,
-      data: tracker,
-    });
+    res.json(tracker);
   } catch (error) {
     res.status(400).json({ message: "Internal server error" });
   }
