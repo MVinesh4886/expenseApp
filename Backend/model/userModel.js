@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
-const expenseModel = require("./expenseModel");
 
 const { DataTypes } = Sequelize;
 
@@ -20,14 +19,22 @@ const userModel = db.define("user", {
   },
 });
 
-userModel.associate = (models) => {
-  userModel.hasMany(models.expenseModel, {
-    foreignKey: {
-      name: "userId",
-      allowNull: false,
-    },
-    onDelete: "cascade",
-  });
-};
+// userModel.associate = (models) => {
+//   userModel.hasMany(models.expenseModel, {
+//     foreignKey: {
+//       name: "userId",
+//       allowNull: false,
+//     },
+//     onDelete: "cascade",
+//   });
+
+//   userModel.hasMany(models.orderModel, {
+//     foreignKey: {
+//       name: "userId",
+//       allowNull: false,
+//     },
+//     onDelete: "cascade",
+//   });
+// };
 
 module.exports = userModel;
