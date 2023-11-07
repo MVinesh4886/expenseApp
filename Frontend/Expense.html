@@ -44,11 +44,13 @@
       let expenses = [];
 
       let userId = ""; // Declare a variable to store the userId
+      // let token = ""; // Declare a variable to store the token
 
       // Retrieve the userId from local storage
       if (localStorage.userDetails) {
         const userDetails = JSON.parse(localStorage.userDetails);
         userId = userDetails.userId;
+        // token = userDetails.token;
       }
 
       if (localStorage.expenses) {
@@ -65,11 +67,19 @@
           description,
           category,
           userId,
+          // token,
         };
         try {
+          const token = JSON.parse(localStorage.getItem("userDetails")).token;
+
           const response = await axios.post(
             "http://localhost:8000/expense/create",
-            expense
+            expense,
+            {
+              headers: {
+                Authorization: `Bearer ${token} `,
+              },
+            }
           );
           console.log(response.data);
         } catch (error) {

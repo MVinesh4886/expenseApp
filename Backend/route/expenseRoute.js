@@ -1,9 +1,10 @@
 const express = require("express");
 const expenseModel = require("../model/expenseModel");
+const isLogin = require("../middleware/Auth");
 
 const expenseRouter = express.Router();
 
-expenseRouter.post("/expense/create", async (req, res) => {
+expenseRouter.post("/expense/create", isLogin, async (req, res) => {
   try {
     const { amount, description, category } = req.body;
     const userId = req.body.userId; // Assuming the userId is passed as a parameter

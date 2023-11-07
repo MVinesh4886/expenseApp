@@ -44,7 +44,6 @@
             emailId,
             password,
           });
-
           console.log(response.data);
           if (response.data.success === false) {
             return alert(response.data.message);
@@ -53,10 +52,12 @@
               emailId: response.data.emailId,
               password: response.data.password,
               userId: response.data.userId,
+              token: response.data.token,
             };
+
             // Store user details in local storage
             localStorage.setItem("userDetails", JSON.stringify(userDetails));
-            console.log("userId:", userDetails.userId); // Log the userId in the console
+
             window.location.href = "./Expense.html";
           }
         } catch (error) {

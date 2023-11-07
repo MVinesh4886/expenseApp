@@ -2,6 +2,8 @@ const express = require("express");
 const userModel = require("../model/userModel");
 const userRouter = express.Router();
 const bcrypt = require("bcryptjs");
+const generateToken = require("../utils/generateToken");
+
 // Register User route
 userRouter.post("/registerUser", async (req, res) => {
   const { name, emailId, password } = req.body;
@@ -23,10 +25,15 @@ userRouter.post("/registerUser", async (req, res) => {
       password: hashedPassword,
     });
 
+    const Token = generateToken(createUser.id);
     return res.status(200).json({
       success: true,
       message: "User registered successfully",
-      data: createUser,
+      id: createUser.id,
+      name: createUser.name,
+      emailId: createUser.emailId,
+      password: createUser.password,
+      token: Token,
     });
   } catch (error) {
     console.log(error.message);
@@ -48,12 +55,15 @@ userRouter.post("/login", async (req, res) => {
         existingUser.password
       );
       if (isPasswordMatched) {
+        const Token = generateToken(existingUser.id);
+
         return res.status(200).json({
           success: true,
           message: "User LoggedIn Successfully",
           emailId: existingUser.emailId,
           password: existingUser.password,
           userId: existingUser.id,
+          token: Token,
         });
       }
     }

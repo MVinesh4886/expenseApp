@@ -1,9 +1,14 @@
 const Sequelize = require("sequelize");
 
-const db = new Sequelize("expensetrackerapp", "root", "myPassword@123", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const db = new Sequelize(
+  "expensetrackerapp",
+  "root",
+  process.env.PASSWORD_KEY,
+  {
+    host: "localhost",
+    dialect: "mysql",
+  }
+);
 
 (async () => {
   try {

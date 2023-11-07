@@ -1,4 +1,6 @@
 const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config();
 const userModel = require("./model/userModel");
 const expenseModel = require("./model/expenseModel");
 const db = require("./config/database");
