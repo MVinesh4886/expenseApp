@@ -51,29 +51,6 @@ expenseRouter.get("/expense/getSingle/:id", async (req, res) => {
   }
 });
 
-// expenseRouter.put("/expense/put/:id", isLogin, async (req, res) => {
-//   try {
-//     const { amount, description, category } = req.body;
-//     const Expense = await expenseModel.update(
-//       { amount, description, category },
-//       {
-//         where: { id: req.params.id },
-//       }
-//     );
-//     if (Expense[0] === 0) {
-//       return res.status(404).json({ message: "Expense not found" });
-//     }
-//     const updatedExpense = await expenseModel.findByPk(req.params.id);
-//     res.status(200).json({
-//       success: true,
-//       data: updatedExpense,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-
 expenseRouter.put("/expense/put/:id", isLogin, async (req, res) => {
   try {
     const findExpense = await expenseModel.findByPk(req.params.id);

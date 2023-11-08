@@ -40,6 +40,7 @@
       let categoryInput = document.getElementById("category");
 
       let addExpenseButton = document.getElementById("addExpense");
+
       let expenseList = document.getElementById("expenseList");
 
       let expenses = [];
@@ -207,6 +208,47 @@
         }
       }
       displayExpenses();
+
+      document
+        .getElementById("razorpay")
+        .addEventListener("click", async function () {
+          try {
+            const token = JSON.parse(localStorage.getItem("userDetails")).token;
+            const response = await axios.get(
+              `http://localhost:8000/purchasePremium`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            console.log(response);
+            var options = {
+              key: response.data.key_id,
+              orderId: response.data.orderId,
+              handler: async function (response) {
+                await axios.post(
+                  "http://localhost:8000/updateTransactionStatus",
+                  {
+                    orderId: options.orderId,
+                    paymentId: response.razorpay_paymentId,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+              },
+            };
+            alert("You are premium user now");
+            const rzp = new Razorpay(options);
+            rzp.open();
+            e.preventDefault();
+          } catch (error) {
+            console.log(error);
+          }
+        });
     </script>
   </body>
 </html>

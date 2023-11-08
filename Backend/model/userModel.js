@@ -17,6 +17,7 @@ const userModel = db.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isPremiumUser: DataTypes.BOOLEAN,
 });
 
 // userModel.associate = (models) => {

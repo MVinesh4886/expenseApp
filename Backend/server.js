@@ -6,6 +6,7 @@ const expenseModel = require("./model/expenseModel");
 const db = require("./config/database");
 const userRouter = require("./route/userRoute");
 const expenseRouter = require("./route/expenseRoute");
+const orderRoute = require("./route/orderRoute");
 const orderModel = require("./model/orderModel");
 const cors = require("cors");
 
@@ -21,6 +22,7 @@ app.use(
 
 app.use(expenseRouter);
 app.use(userRouter);
+app.use(orderRoute);
 
 userModel.hasMany(expenseModel, { foreignKey: "userId" });
 expenseModel.belongsTo(userModel, { foreignKey: "userId" });
