@@ -51,31 +51,59 @@ expenseRouter.get("/expense/getSingle/:id", async (req, res) => {
   }
 });
 
-expenseRouter.put("/expense/put/:id", async (req, res) => {
+// expenseRouter.put("/expense/put/:id", isLogin, async (req, res) => {
+//   try {
+//     const { amount, description, category } = req.body;
+//     const Expense = await expenseModel.update(
+//       { amount, description, category },
+//       {
+//         where: { id: req.params.id },
+//       }
+//     );
+//     if (Expense[0] === 0) {
+//       return res.status(404).json({ message: "Expense not found" });
+//     }
+//     const updatedExpense = await expenseModel.findByPk(req.params.id);
+//     res.status(200).json({
+//       success: true,
+//       data: updatedExpense,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+expenseRouter.put("/expense/put/:id", isLogin, async (req, res) => {
   try {
-    const { amount, description, category } = req.body;
-    const updatedTracker = await expenseModel.update(
-      { amount, description, category },
-      { where: { id: req.params.id } }
-    );
-    if (updatedTracker[0] === 0) {
-      return res.status(500).json({ message: "tracker not found" });
+    const findExpense = await expenseModel.findByPk(req.params.id);
+    if (!findExpense) {
+      return res.status(404).json({
+        message: "Expense not found",
+      });
     }
-    const tracker = await expenseModel.findByPk(req.params.id);
-    res.status(200).json({
-      success: true,
-      data: tracker,
+    const { amount, description, category } = req.body;
+    await expenseModel.update(
+      { amount, description, category },
+      {
+        where: { id: req.params.id },
+      }
+    );
+    const updatedExpense = await expenseModel.findByPk(req.params.id);
+    return res.status(200).json({
+      message: "Expense updated successfully",
+      expense: updatedExpense,
     });
   } catch (error) {
     console.log(error);
-    res.status(501).json({ message: "internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-expenseRouter.delete("/expense/delete/:id", async (req, res) => {
+expenseRouter.delete("/expense/delete/:id", isLogin, async (req, res) => {
   try {
     const deletedTracker = await expenseModel.destroy({
-      where: { id: req.params.id },
+      where: { id: req.params.id, userId: req.body.userId },
     });
     if (deletedTracker === 0) {
       return res.status(500).json({ message: "tracker not found" });

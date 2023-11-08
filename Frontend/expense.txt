@@ -27,7 +27,6 @@
       </select>
 
       <button id="addExpense">Add Expense</button>
-
       <br />
       <button id="razorpay">Buy Premium</button>
       <ul id="expenseList"></ul>
@@ -83,10 +82,8 @@
               },
             }
           );
-
-          console.log(response.data);
-          expense.id = response.data.data.id;
-          alert("Added expenses successfully to the database");
+          console.log(response);
+          alert("added expenses successfully to the database");
         } catch (error) {
           console.log(error);
           alert("Request failed with status code 400");
@@ -104,101 +101,26 @@
         expenseList.innerHTML = "";
 
         for (let i = 0; i < expenses.length; i++) {
-          let expense = expenses[i];
           let listItem = document.createElement("li");
           listItem.innerHTML = `Expense Amount: ${expense.amount}, Description: ${expense.description}, Category: ${expense.category}`;
 
           let deleteButton = document.createElement("button");
           deleteButton.innerHTML = " Delete";
-          deleteButton.addEventListener("click", async function () {
-            try {
-              const token = JSON.parse(
-                localStorage.getItem("userDetails")
-              ).token;
-              const deleteResponse = await axios.delete(
-                `http://localhost:8000/expense/delete/${expense.id}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token} `,
-                  },
-                }
-              );
-              console.log(deleteResponse);
-              alert("delete response from the database successfully");
-
-              // Remove the expense from the expenses array
-              expenses.splice(i, 1);
-
-              // Update the local storage
-              localStorage.setItem("expenses", JSON.stringify(expenses));
-
-              // Update the displayed expenses
-              displayExpenses();
-            } catch (error) {
-              console.log(error);
-            }
+          deleteButton.addEventListener("click", function () {
+            expenses.splice(i, 1);
+            localStorage.expenses = JSON.stringify(expenses);
+            displayExpenses();
           });
 
           let editButton = document.createElement("button");
           editButton.textContent = " Edit";
           editButton.addEventListener("click", function () {
-            // Set the expense details as the current values of the input fields
             expenseInput.value = expense.amount;
             descriptionInput.value = expense.description;
             categoryInput.value = expense.category;
-
-            // Create a save button
-            const saveButton = document.createElement("button");
-            saveButton.textContent = "Save";
-
-            // Add an event listener to the save button
-            saveButton.addEventListener("click", async function () {
-              // Get the updated expense details from the input fields
-              const updatedAmount = expenseInput.value;
-              const updatedDescription = descriptionInput.value;
-              const updatedCategory = categoryInput.value;
-
-              // Update the expense object with the updated details
-              expense.amount = updatedAmount;
-              expense.description = updatedDescription;
-              expense.category = updatedCategory;
-
-              try {
-                const token = JSON.parse(
-                  localStorage.getItem("userDetails")
-                ).token;
-
-                const response = await axios.put(
-                  `http://localhost:8000/expense/put/${expense.id}`,
-                  expense,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                );
-
-                console.log(response.data);
-                alert("Expense updated successfully in the database");
-              } catch (error) {
-                console.log(error);
-                alert("Request failed with status code 400");
-              }
-
-              // Update the local storage
-              localStorage.setItem("expenses", JSON.stringify(expenses));
-
-              // Update the displayed expenses
-              displayExpenses();
-
-              // Remove the save button and restore the delete and edit buttons
-              listItem.removeChild(saveButton);
-              listItem.appendChild(deleteButton);
-              listItem.appendChild(editButton);
-            });
-
-            // Replace the edit button with the save button
-            listItem.replaceChild(saveButton, editButton);
+            expenses.splice(i, 1);
+            localStorage.expenses = JSON.stringify(expenses);
+            displayExpenses();
           });
 
           listItem.appendChild(deleteButton);
@@ -210,3 +132,84 @@
     </script>
   </body>
 </html>
+
+
+//////////////////////////////
+
+   editButton.addEventListener("click", function () {
+            // Create input fields for editing
+            const amountInput = document.createElement("input");
+            amountInput.type = "text";
+            amountInput.value = expense.amount;
+
+            const descriptionInput = document.createElement("input");
+            descriptionInput.type = "text";
+            descriptionInput.value = expense.description;
+
+            const categoryInput = document.createElement("select");
+            const categories = ["Food", "Fuel", "Electricity", "Recharge"];
+            for (let i = 0; i < categories.length; i++) {
+              const option = document.createElement("option");
+              option.text = categories[i];
+              option.value = categories[i];
+              if (categories[i] === expense.category) {
+                option.selected = true;
+              }
+              categoryInput.appendChild(option);
+            }
+
+            // Replace expense details with input fields
+            listItem.innerHTML = "";
+            listItem.appendChild(amountInput);
+            listItem.appendChild(descriptionInput);
+            listItem.appendChild(categoryInput);
+
+            // Create save button
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "Save";
+            saveButton.addEventListener("click", async function () {
+              const updatedAmount = amountInput.value;
+              const updatedDescription = descriptionInput.value;
+              const updatedCategory = categoryInput.value;
+
+              const updatedExpense = {
+                amount: updatedAmount,
+                description: updatedDescription,
+                category: updatedCategory,
+              };
+
+              try {
+                const token = JSON.parse(
+                  localStorage.getItem("userDetails")
+                ).token;
+
+                const response = await axios.put(
+                  `http://localhost:8000/expense/put/${expense.id}`,
+                  updatedExpense,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+
+                console.log(response.data);
+                expense.amount = updatedAmount;
+                expense.description = updatedDescription;
+                expense.category = updatedCategory;
+                alert("Expense updated successfully in the database");
+              } catch (error) {
+                console.log(error);
+                alert("Request failed with status code 400");
+              }
+
+              // Update the local storage
+              localStorage.setItem("expenses", JSON.stringify(expenses));
+
+              // Update the displayed expenses
+              displayExpenses();
+            });
+
+            // Replace edit button with save button
+            listItem.appendChild(saveButton);
+          });

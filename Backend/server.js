@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "http://127.0.0.1:5501",
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
   })
 );
 

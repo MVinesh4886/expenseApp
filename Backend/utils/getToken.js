@@ -3,7 +3,7 @@ const getToken = (req) => {
   const headerObj = req.headers;
   const token = headerObj["authorization"].split(" ")[1];
   //if there is token, return token
-  if (token) {
+  if (token !== undefined) {
     return token;
   }
   return {
