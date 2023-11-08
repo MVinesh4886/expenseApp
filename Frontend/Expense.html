@@ -211,7 +211,8 @@
 
       document
         .getElementById("razorpay")
-        .addEventListener("click", async function () {
+        .addEventListener("click", async function (e) {
+          e.preventDefault();
           try {
             const token = JSON.parse(localStorage.getItem("userDetails")).token;
             const response = await axios.get(
@@ -222,7 +223,10 @@
                 },
               }
             );
+
+            // alert("You are a premium user Now");
             console.log(response);
+
             var options = {
               key: response.data.key_id,
               orderId: response.data.orderId,
@@ -241,10 +245,26 @@
                 );
               },
             };
-            alert("You are premium user now");
+            // Remove the "Buy Premium" button
+            const buyPremiumButton = document.getElementById("razorpay");
+
+            // Create a new text node with the plain text
+            const premiumText = document.createElement("p");
+            premiumText.textContent = "You are a premium user";
+            document.body.appendChild(premiumText);
+
+            const leaderboardButton = document.createElement("button");
+            leaderboardButton.textContent = "Show Leaderboard";
+            document.body.appendChild(leaderboardButton);
+
+            leaderboardButton.addEventListener("click", function (e) {
+              e.preventDefault();
+            });
+
+            buyPremiumButton.remove();
+
             const rzp = new Razorpay(options);
             rzp.open();
-            e.preventDefault();
           } catch (error) {
             console.log(error);
           }

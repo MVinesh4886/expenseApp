@@ -25,6 +25,8 @@ orderRoute.get("/purchasePremium", isLogin, async (req, res) => {
     });
 
     res.json({
+      success: true,
+      message: "You are a Premium User Now",
       orderId: order.id,
       order,
       key_id: razorpay.key_id,
@@ -32,6 +34,7 @@ orderRoute.get("/purchasePremium", isLogin, async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
+      success: false,
       message: "Failed to purchase premium",
     });
   }
@@ -49,7 +52,7 @@ orderRoute.post("/updateTransactionStatus", isLogin, async (req, res) => {
     });
 
     const user = await userModel.findOne({
-      where: { isPremiumUser },
+      where: { id: req.user.id },
     });
     await user.update({ isPremiumUser: true });
     return res
