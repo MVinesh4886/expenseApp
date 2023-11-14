@@ -2,6 +2,7 @@ const express = require("express");
 const expenseModel = require("../model/expenseModel");
 const isLogin = require("../middleware/Auth");
 const userModel = require("../model/userModel");
+const sequelize = require("sequelize");
 
 const expenseRouter = express.Router();
 
@@ -98,25 +99,21 @@ expenseRouter.delete("/expense/delete/:id", isLogin, async (req, res) => {
 
 expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
   try {
-    const users = await userModel.findAll();
-    const expenses = await expenseModel.findAll();
-    const leaderboard = {};
-    expenses.forEach((expense) => {
-      if (leaderboard[expense.userId]) {
-        leaderboard[expense.userId] =
-          leaderboard[expense.userId] + expense.amount;
-      } else {
-        leaderboard[expense.userId] = expense.amount;
-      }
+    const leaderboard = await userModel.findAll({
+      attributes: [
+        "id",
+        [sequelize.fn("sum", sequelize.col("expenses.amount")), "total_cost"],
+      ],
+      include: [
+        {
+          model: expenseModel,
+          attributes: [],
+        },
+      ],
+      group: ["user.id"],
     });
-
-    const usersLeaderBoard = [];
-    users.forEach((user) => {
-      usersLeaderBoard.push({
-        name: user.name,
-        totalCost: leaderboard[user.userId],
-      });
-    });
+    console.log(leaderboard);
+    res.send(leaderboard);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "internal server error" });

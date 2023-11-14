@@ -193,29 +193,27 @@ function showIsPremiumUser() {
   leaderboardButton.textContent = "Show Leaderboard";
   document.body.appendChild(leaderboardButton);
 
-  leaderboardButton.addEventListener("click", showleaderboard());
-}
+  leaderboardButton.addEventListener("click", async () => {
+    // Handle the "Show Leaderboard" button click event
 
-async function showleaderboard() {
-  // Handle the "Show Leaderboard" button click event
+    const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
-  const token = JSON.parse(localStorage.getItem("userDetails")).token;
-
-  const getLeaderBoard = await axios.get(
-    `http://localhost:8000/expense/showleaderboard`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  console.log(getLeaderBoard);
-  //   const leaderboardElement = document.getElementById("leaderboard");
-  //   leaderboardElement.innerHTML = "<h1>Leaderboard</h1>";
-  //   getLeaderBoard.data.forEach((userDetails) => {
-  //     leaderboardElement.textContent = `name: ${userDetails.name} and totalCost: ${userDetails.totalCost}`;
-  //   });
-  //   document.body.appendChild(leaderboardElement);
+    const getLeaderBoard = await axios.get(
+      `http://localhost:8000/expense/showleaderboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(getLeaderBoard);
+    const leaderboardElement = document.getElementById("leaderboard");
+    leaderboardElement.innerHTML = "<h3>Leaderboard</h3>";
+    getLeaderBoard.data.forEach((userDetails) => {
+      leaderboardElement.innerHTML += `<div>id: ${userDetails.id} and total_cost: ${userDetails.total_cost}</div>`;
+    });
+    document.body.appendChild(leaderboardElement);
+  });
 }
 
 const user = JSON.parse(localStorage.getItem("userDetails")).token;
