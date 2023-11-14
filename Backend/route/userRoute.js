@@ -25,7 +25,11 @@ userRouter.post("/registerUser", async (req, res) => {
       password: hashedPassword,
     });
 
-    const Token = generateToken(createUser.id);
+    const Token = generateToken(
+      createUser.id,
+      createUser.emailId,
+      createUser.name
+    );
     return res.status(200).json({
       success: true,
       message: "User registered successfully",
@@ -49,13 +53,24 @@ userRouter.post("/login", async (req, res) => {
     const existingUser = await userModel.findOne({
       where: { emailId },
     });
+    const isPremiumUser = null;
     if (existingUser) {
       const isPasswordMatched = await bcrypt.compare(
         password,
         existingUser.password
       );
       if (isPasswordMatched) {
-        const Token = generateToken(existingUser.id);
+        //Generate a new Token
+        const Token = generateToken(
+          existingUser.id,
+          existingUser.name,
+          existingUser.emailId,
+          isPremiumUser
+        );
+
+        // Update the user's token in the database or local storage
+        existingUser.token = Token;
+        await existingUser.save();
 
         return res.status(200).json({
           success: true,

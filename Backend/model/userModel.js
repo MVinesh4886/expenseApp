@@ -17,7 +17,11 @@ const userModel = db.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  isPremiumUser: DataTypes.BOOLEAN,
+  isPremiumUser: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 // userModel.associate = (models) => {

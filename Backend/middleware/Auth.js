@@ -6,7 +6,7 @@ const isLogin = (req, res, next) => {
   const token = getToken(req);
   //2.verify Token
   const decodedUser = verifyToken(token);
-  console.log(decodedUser);
+
   // if there is no decoded user then
   if (!decodedUser) {
     return res.json({
@@ -16,6 +16,9 @@ const isLogin = (req, res, next) => {
 
   //3. save the user into req obj
   req.body.userId = decodedUser.id;
+  req.body.isPremiumUser = decodedUser.isPremiumUser;
+  req.body.name = decodedUser.name;
+  req.body.emailId = decodedUser.emailId;
   next();
 };
 

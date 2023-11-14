@@ -3,7 +3,7 @@ const Razorpay = require("razorpay");
 const orderModel = require("../model/orderModel");
 const isLogin = require("../middleware/Auth");
 const userModel = require("../model/userModel");
-
+const generateToken = require("../utils/generateToken");
 const orderRoute = express.Router();
 
 orderRoute.get("/purchasePremium", isLogin, async (req, res) => {
@@ -51,13 +51,15 @@ orderRoute.post("/updateTransactionStatus", isLogin, async (req, res) => {
       status: "SUCCESSFUL",
     });
 
-    const user = await userModel.findOne({
-      where: { id: req.user.id },
+    const user = await userModel.findByPk(userId);
+    const updatedUser = await user.update({ isPremiumUser: true });
+
+    const Token = generateToken(updatedUser);
+    return res.status(202).json({
+      success: true,
+      message: "Transactions updated successfully",
+      token: Token,
     });
-    await user.update({ isPremiumUser: true });
-    return res
-      .status(202)
-      .json({ success: true, message: "Transactions updated successfully" });
   } catch (error) {
     console.log(error);
     res

@@ -1,6 +1,7 @@
 const express = require("express");
 const expenseModel = require("../model/expenseModel");
 const isLogin = require("../middleware/Auth");
+const userModel = require("../model/userModel");
 
 const expenseRouter = express.Router();
 
@@ -92,6 +93,33 @@ expenseRouter.delete("/expense/delete/:id", isLogin, async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(501).json({ message: "internal server error" });
+  }
+});
+
+expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
+  try {
+    const users = await userModel.findAll();
+    const expenses = await expenseModel.findAll();
+    const leaderboard = {};
+    expenses.forEach((expense) => {
+      if (leaderboard[expense.userId]) {
+        leaderboard[expense.userId] =
+          leaderboard[expense.userId] + expense.amount;
+      } else {
+        leaderboard[expense.userId] = expense.amount;
+      }
+    });
+
+    const usersLeaderBoard = [];
+    users.forEach((user) => {
+      usersLeaderBoard.push({
+        name: user.name,
+        totalCost: leaderboard[user.userId],
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "internal server error" });
   }
 });
 
