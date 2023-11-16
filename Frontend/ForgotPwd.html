@@ -6,7 +6,7 @@
     <title>Forgot Password</title>
   </head>
   <body>
-    <form>
+    <form onsubmit="forgotPassword(event)">
       <div>
         <label for="email">EmailId:</label>
         <input
@@ -20,18 +20,20 @@
       </div>
     </form>
   </body>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
     async function forgotPassword(event) {
       event.preventDefault();
       const emailId = document.getElementById("email").value;
       try {
+        const userDetails = {
+          emailId,
+        };
         const response = await axios.post(
-          "http://localhost:8000//password/forgotpassword",
-          {
-            emailId,
-          }
+          "http://localhost:8000/password/forgotpassword",
+          userDetails
         );
-        console.log(response.data);
+        console.log(response);
       } catch (error) {
         console.log(error);
       }

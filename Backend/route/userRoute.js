@@ -4,6 +4,11 @@ const userRouter = express.Router();
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 
+const SibApiV3Sdk = require("sib-api-v3-sdk");
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+var apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.API_KEY;
+
 // Register User route
 userRouter.post("/registerUser", async (req, res) => {
   const { name, emailId, password } = req.body;
@@ -92,11 +97,36 @@ userRouter.post("/login", async (req, res) => {
 });
 
 userRouter.post("/password/forgotPassword", async function (req, res) {
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
+    sender: { email: "vineshkrishna26@gmail.com", name: "Vinesh" },
+    subject: "This is my default subject line",
+    htmlContent:
+      "<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>",
+    params: {
+      greeting: "This is the default greeting",
+      headline: "This is the default headline",
+    },
+    messageVersions: [
+      //Definition for Message Version 1
+      {
+        to: [
+          {
+            emailId: req.body.emailId,
+          },
+        ],
+        htmlContent:
+          "<!DOCTYPE html><html><body><h1>Modified header!</h1><p>This is still a paragraph</p></body></html>",
+        subject: "We are happy to be working with you",
+      },
+    ],
+  });
   try {
-    const { emailId } = req.body;
-    const forgotPassword = await userModel.findOne({ email: emailId });
+    const sendEmail = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("API called successfully. Returned data: " + data);
+    res.status(200).send(sendEmail);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
