@@ -84,6 +84,7 @@ function displayExpenses() {
           }
         );
 
+        console.log(deleteResponse);
         alert("Delete response from the database successfully");
 
         // Remove the expense from the expenses array
@@ -135,7 +136,7 @@ function displayExpenses() {
               },
             }
           );
-
+          console.log(response);
           alert("Expense updated successfully in the database");
         } catch (error) {
           console.log(error);
@@ -210,7 +211,7 @@ function showIsPremiumUser() {
     const leaderboardElement = document.getElementById("leaderboard");
     leaderboardElement.innerHTML = "<h3>Leaderboard</h3>";
     getLeaderBoard.data.forEach((userDetails) => {
-      leaderboardElement.innerHTML += `<div>id: ${userDetails.id} and total_cost: ${userDetails.total_cost}</div>`;
+      leaderboardElement.innerHTML += `<div>id: ${userDetails.id} name: ${userDetails.name} total_cost: ${userDetails.total_cost}</div>`;
     });
     document.body.appendChild(leaderboardElement);
   });
@@ -290,3 +291,20 @@ document
   });
 
 checkIsPremimumUser();
+
+// Function to logout and redirect to the login page
+function logout(e) {
+  e.preventDefault();
+  // // Clear the local storage
+  // localStorage.clear();
+  // // Redirect to the login page
+  // window.location.href = "./Login.html";
+
+  if (confirm("Are you sure you want to logout?")) {
+    localStorage.clear();
+    window.location.href = "./Login.html";
+  }
+}
+
+// Add event listener to the logout button
+document.getElementById("logout").addEventListener("click", logout);

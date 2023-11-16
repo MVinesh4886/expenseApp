@@ -22,6 +22,11 @@ const userModel = db.define("user", {
     allowNull: false,
     defaultValue: false,
   },
+  totalExpenses: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0, // Set a default value of 0 for totalExpenses
+  },
 });
 
 // userModel.associate = (models) => {

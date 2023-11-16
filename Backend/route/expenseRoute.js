@@ -3,25 +3,38 @@ const expenseModel = require("../model/expenseModel");
 const isLogin = require("../middleware/Auth");
 const userModel = require("../model/userModel");
 const sequelize = require("sequelize");
+const db = require("../config/database");
 
 const expenseRouter = express.Router();
 
 expenseRouter.post("/expense/create", isLogin, async (req, res) => {
+  const t = await db.transaction();
   try {
     const { amount, description, category } = req.body;
     const userId = req.body.userId; // Assuming the userId is passed as a parameter
-    const newTracker = await expenseModel.create({
-      amount,
-      description,
-      category,
-      userId,
-    });
+
+    // Update totalExpenses in userModel
+    const user = await userModel.findByPk(userId);
+    const totalExpenses = Number(user.totalExpenses) + Number(amount);
+    await user.update({ totalExpenses });
+
+    const newTracker = await expenseModel.create(
+      {
+        amount,
+        description,
+        category,
+        userId,
+      },
+      { transaction: t }
+    );
+    await t.commit();
     console.log(newTracker);
     res.status(200).json({
       success: true,
       data: newTracker,
     });
   } catch (error) {
+    await t.rollback();
     console.log(error);
     res.status(400).json({ message: "Internal server error" });
   }
@@ -81,8 +94,20 @@ expenseRouter.put("/expense/put/:id", isLogin, async (req, res) => {
 
 expenseRouter.delete("/expense/delete/:id", isLogin, async (req, res) => {
   try {
+    const expenseId = req.params.id; // Get the expenseId from the URL parameter
+    const userId = req.body.userId; // Get the userId from the request body
+
+    // Get the amount of the expense to be deleted
+    const expense = await expenseModel.findByPk(expenseId);
+    const amount = expense.amount;
+
+    // Update totalExpenses in userModel
+    const user = await userModel.findByPk(userId);
+    const totalExpenses = Number(user.totalExpenses) - Number(amount);
+    await user.update({ totalExpenses });
+
     const deletedTracker = await expenseModel.destroy({
-      where: { id: req.params.id, userId: req.body.userId },
+      where: { id: expenseId, userId: userId },
     });
     if (deletedTracker === 0) {
       return res.status(500).json({ message: "tracker not found" });
@@ -102,6 +127,7 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
     const leaderboard = await userModel.findAll({
       attributes: [
         "id",
+        "name",
         [sequelize.fn("sum", sequelize.col("expenses.amount")), "total_cost"],
       ],
       include: [
@@ -111,6 +137,7 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
         },
       ],
       group: ["user.id"],
+      order: [["total_cost", "DESC"]],
     });
     console.log(leaderboard);
     res.send(leaderboard);
