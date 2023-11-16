@@ -91,21 +91,14 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-// Login route to fetch single user
-// userRouter.get("/login/:id", async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const user = await userModel.findbyPk(id);
-//     res.json(user);
-//     // return res
-//     //   .status(400)
-//     //   .json({ success: false, message: "Invalid login credentials" });
-//   } catch (error) {
-//     console.log(error.message);
-//     // res.status(500).json({ success: false, message: "Internal server error" });
-//     res.json({ message: "Internal server error" });
-//   }
-// });
+userRouter.post("/password/forgotPassword", async function (req, res) {
+  try {
+    const { emailId } = req.body;
+    const forgotPassword = await userModel.findOne({ email: emailId });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 userRouter.get("/registerUser", async (req, res) => {
   try {
