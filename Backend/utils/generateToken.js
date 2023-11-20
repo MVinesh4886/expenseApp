@@ -11,16 +11,25 @@
 
 // this is another way to generate
 const jwt = require("jsonwebtoken");
-const generateToken = (userId, name, emailId, isPremiumUser) => {
+const generateToken = (
+  userId,
+  name,
+  emailId,
+  isPremiumUser,
+  isVerified,
+  resetPasswordToken
+) => {
   const payload = {
     id: userId,
     name,
     emailId,
     isPremiumUser,
+    isVerified,
+    resetPasswordToken,
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: "30d",
+    expiresIn: 60 * 60,
   });
 
   return token;

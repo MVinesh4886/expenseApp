@@ -27,13 +27,11 @@
           required
         />
       </div>
-      <!-- <a href="./Register.html">Register</a> -->
+
       <button type="submit" id="loginBtn">
         Login <a href="./Expense.html"></a>
       </button>
-      <button type="submit" id="forgotBtn">
-        Forgot Password <a href="./ForgotPwd.html"></a>
-      </button>
+      <button type="button" id="forgotPassword">forgot Password</button>
     </form>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -48,8 +46,9 @@
             password,
           });
           console.log(response.data);
-          if (response.data.success === false) {
-            return alert(response.data.message);
+          console.log(response.data.message);
+          if (response.data.status === 401) {
+            alert(response.data.message);
           } else {
             const userDetails = {
               emailId: response.data.emailId,
@@ -65,15 +64,41 @@
           }
         } catch (error) {
           console.log(error);
-          alert("Invalid login Credentials");
+          if (error.response.data) {
+            alert(error.response.data.message);
+          } else {
+            alert("Invalid login Credentials");
+          }
         }
       }
-      document
-        .getElementById("forgotBtn")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          window.location.href = "./ForgotPwd.html";
-        });
+
+      const forgotPasswordButton = document.getElementById("forgotPassword");
+
+      forgotPasswordButton.addEventListener("click", async () => {
+        const emailId = document.getElementById("email").value;
+
+        // Check if the email field is empty
+        if (emailId === "") {
+          alert("Please enter your email first");
+          return;
+        }
+
+        try {
+          // Send a POST request to the backend to initiate the password reset process
+          const response = await axios.post(
+            "http://localhost:8000/forgotPassword",
+            {
+              emailId,
+            }
+          );
+
+          console.log(response.data); // Email sent successfully
+          alert("Check your email");
+        } catch (error) {
+          // Error message from the backend
+          console.log(error);
+        }
+      });
     </script>
   </body>
 </html>

@@ -27,24 +27,14 @@ const userModel = db.define("user", {
     allowNull: false,
     defaultValue: 0, // Set a default value of 0 for totalExpenses
   },
+  isVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  resetPasswordToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
-
-// userModel.associate = (models) => {
-//   userModel.hasMany(models.expenseModel, {
-//     foreignKey: {
-//       name: "userId",
-//       allowNull: false,
-//     },
-//     onDelete: "cascade",
-//   });
-
-//   userModel.hasMany(models.orderModel, {
-//     foreignKey: {
-//       name: "userId",
-//       allowNull: false,
-//     },
-//     onDelete: "cascade",
-//   });
-// };
 
 module.exports = userModel;

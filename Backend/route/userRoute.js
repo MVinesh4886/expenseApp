@@ -2,12 +2,9 @@ const express = require("express");
 const userModel = require("../model/userModel");
 const userRouter = express.Router();
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 const generateToken = require("../utils/generateToken");
-
-const SibApiV3Sdk = require("sib-api-v3-sdk");
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
-var apiKey = defaultClient.authentications["api-key"];
-apiKey.apiKey = process.env.API_KEY;
 
 // Register User route
 userRouter.post("/registerUser", async (req, res) => {
@@ -35,9 +32,37 @@ userRouter.post("/registerUser", async (req, res) => {
       createUser.emailId,
       createUser.name
     );
+
+    await createUser.save();
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "vineshkrishna26@gmail.com",
+        pass: "kfkt dktq hfox tmkj",
+      },
+    });
+
+    const mailOptions = {
+      from: "vineshkrishna26@gmail.com",
+      to: emailId,
+      subject: "Email Verification",
+      text: `Please verify your email by clicking the following link: http://localhost:8000/verifyEmail/${Token}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+        res.status(500).json({ error: "Failed to send email" });
+      } else {
+        console.log("Email sent:", info.response);
+        res.json({ message: "Email sent" });
+      }
+    });
+
     return res.status(200).json({
       success: true,
-      message: "User registered successfully",
+      message: "User registered successfully, Please verify your email",
       id: createUser.id,
       name: createUser.name,
       emailId: createUser.emailId,
@@ -58,14 +83,22 @@ userRouter.post("/login", async (req, res) => {
     const existingUser = await userModel.findOne({
       where: { emailId },
     });
+
     const isPremiumUser = null;
+
     if (existingUser) {
+      // if the existing user is not verified
+      if (!existingUser.isVerified) {
+        res.status(401).json({
+          success: false,
+          message: "Email not verified. Please verify your email first.",
+        });
+      }
       const isPasswordMatched = await bcrypt.compare(
         password,
         existingUser.password
       );
       if (isPasswordMatched) {
-        //Generate a new Token
         const Token = generateToken(
           existingUser.id,
           existingUser.name,
@@ -87,46 +120,32 @@ userRouter.post("/login", async (req, res) => {
         });
       }
     }
+
     return res
       .status(400)
       .json({ success: false, message: "Invalid login credentials" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log(error);
+    res.status(500).json(error);
   }
 });
 
-userRouter.post("/password/forgotPassword", async function (req, res) {
-  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
-    sender: { email: "vineshkrishna26@gmail.com", name: "Vinesh" },
-    subject: "This is my default subject line",
-    htmlContent:
-      "<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>",
-    params: {
-      greeting: "This is the default greeting",
-      headline: "This is the default headline",
-    },
-    messageVersions: [
-      //Definition for Message Version 1
-      {
-        to: [
-          {
-            emailId: req.body.emailId,
-          },
-        ],
-        htmlContent:
-          "<!DOCTYPE html><html><body><h1>Modified header!</h1><p>This is still a paragraph</p></body></html>",
-        subject: "We are happy to be working with you",
-      },
-    ],
-  });
+// Email verification
+userRouter.get("/verifyEmail/:Token", async (req, res) => {
+  const token = req.params.Token;
   try {
-    const sendEmail = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("API called successfully. Returned data: " + data);
-    res.status(200).send(sendEmail);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = decodedToken.id;
+    const user = await userModel.findByPk(userId);
+    console.log(user);
+
+    user.isVerified = true;
+    await user.save();
+
+    return res.json({ message: "Email verified successfully" });
   } catch (error) {
-    console.error(error);
+    console.log("Error verifying email:", error);
+    res.status(500).json({ error: "Failed to verify email" });
   }
 });
 
@@ -140,6 +159,78 @@ userRouter.get("/registerUser", async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+  }
+});
+
+userRouter.post("/forgotPassword", async (req, res) => {
+  const { emailId } = req.body;
+
+  try {
+    // Find the user by their email
+    const user = await userModel.findOne({ where: { emailId } });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Generate a unique token for the password reset link
+    const Token = generateToken(user.id);
+    console.log(Token);
+
+    // Save the token in the user's record in the database
+    user.resetPasswordToken = Token;
+    await user.save();
+
+    // Send an email to the user with the password reset link
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "vineshkrishna26@gmail.com",
+        pass: "kfkt dktq hfox tmkj",
+      },
+    });
+
+    const mailOptions = {
+      from: "vineshkrishna26@gmail.com",
+      to: emailId,
+      subject: "Reset Your Password",
+      text: `http://127.0.0.1:5501/frontend/ResetPassword.html`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+        res.status(500).json({ error: "Failed to send email" });
+      } else {
+        console.log("Email sent:", info.response);
+        res.json({ message: "Email sent" });
+      }
+    });
+  } catch (error) {
+    console.log("Error initiating password reset:", error);
+    res.status(500).json(error);
+  }
+});
+
+// Reset password
+userRouter.post("/resetPassword", async (req, res) => {
+  const { emailId, password } = req.body;
+
+  try {
+    const user = await userModel.findOne({ where: { emailId } });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully", user });
+  } catch (error) {
+    console.log("Error resetting password:", error);
+    res.status(500).json(error);
   }
 });
 
