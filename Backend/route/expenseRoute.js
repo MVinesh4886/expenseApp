@@ -4,6 +4,7 @@ const isLogin = require("../middleware/Auth");
 const userModel = require("../model/userModel");
 const sequelize = require("sequelize");
 const db = require("../config/database");
+const AWS = require("aws-sdk");
 
 const expenseRouter = express.Router();
 
@@ -147,10 +148,41 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
   }
 });
 
+function uploadToS3(data, filename) {
+  const bucketName = "expensetrackerapp4321";
+  const userKey = process.env.ACCESS_KEYID;
+  const secretKey = process.env.SECRET_KEYID;
+
+  let s3Bucket = new AWS.S3({
+    accessKeyId: userKey,
+    secretAccessKey: secretKey,
+    // Bucket: bucketName,
+  });
+
+  s3Bucket.createBucket(() => {
+    var params = {
+      Bucket: bucketName,
+      Key: filename,
+      Body: data,
+    };
+    s3Bucket.upload(params, (err, s3Bucket) => {
+      if (err) {
+        console.log("Something went wrong", err);
+      } else {
+        console.log("Successfully uploaded", s3Bucket);
+      }
+    });
+  });
+}
+
 expenseRouter.get("/expense/download", isLogin, async (req, res) => {
   try {
     const download = await userModel.findAll();
     console.log(download);
+    const stringifiedExpenses = JSON.stringify(download);
+    const filename = "Expense.txt";
+    const fileUrl = uploadToS3(stringifiedExpenses, filename);
+    res.status(200).json({ fileUrl, success: true });
   } catch (error) {
     console.log(error);
   }

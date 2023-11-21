@@ -39,7 +39,7 @@ userRouter.post("/registerUser", async (req, res) => {
       service: "gmail",
       auth: {
         user: "vineshkrishna26@gmail.com",
-        pass: "kfkt dktq hfox tmkj",
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -186,7 +186,7 @@ userRouter.post("/forgotPassword", async (req, res) => {
       service: "gmail",
       auth: {
         user: "vineshkrishna26@gmail.com",
-        pass: "kfkt dktq hfox tmkj",
+        pass: process.env.EMAIL_PASS,
       },
     });
 

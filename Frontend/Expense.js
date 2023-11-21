@@ -182,17 +182,25 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-document.getElementById("download").addEventListener("click", download);
+// document.getElementById("download").addEventListener("click", download);
 
 async function download() {
   try {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
-    await axios.get(`http://localhost:8000/expense/download`, {
+    const response = await axios.get(`http://localhost:8000/expense/download`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (response.status === 201) {
+      // The backend is essentially sending a download link
+      // which if we open in browser, the file would download
+      var a = document.createElement("a");
+      a.href = response.data.fileUrl;
+      a.download = "myexpense.csv";
+      a.click();
+    }
   } catch (error) {
     console.log(error);
   }
