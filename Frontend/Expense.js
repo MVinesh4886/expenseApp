@@ -182,6 +182,23 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
+document.getElementById("download").addEventListener("click", download);
+
+async function download() {
+  try {
+    const token = JSON.parse(localStorage.getItem("userDetails")).token;
+
+    await axios.get(`http://localhost:8000/expense/download`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//if the user is premium then we remove the buyPremium button and show that he is a premium user.
 function showIsPremiumUser() {
   // Remove the "Buy Premium" button
   const buyPremiumButton = document.getElementById("razorpay");
@@ -222,6 +239,7 @@ const decodedUser = parseJwt(user);
 const userDetails = decodedUser.id;
 console.log(userDetails);
 
+//To check if the user is premium user or not.
 function checkIsPremimumUser() {
   const orderToken = JSON.parse(localStorage.getItem("Token"));
   if (orderToken) {
@@ -238,6 +256,7 @@ function checkIsPremimumUser() {
   }
 }
 
+// for razor pay,
 document
   .getElementById("razorpay")
   .addEventListener("click", async function (e) {
@@ -301,7 +320,7 @@ function logout(e) {
   // window.location.href = "./Login.html";
 
   if (confirm("Are you sure you want to logout?")) {
-    localStorage.clear();
+    localStorage.removeItem("userDetails");
     window.location.href = "./Login.html";
   }
 }

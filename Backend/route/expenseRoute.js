@@ -147,4 +147,13 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
   }
 });
 
+expenseRouter.get("/expense/download", isLogin, async (req, res) => {
+  try {
+    const download = await userModel.findAll();
+    console.log(download);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = expenseRouter;
