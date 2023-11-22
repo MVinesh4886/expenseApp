@@ -148,31 +148,56 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
   }
 });
 
-function uploadToS3(data, filename) {
+// function uploadToS3(data, filename) {
+//   const bucketName = "expensetrackerapp4321";
+//   const userKey = process.env.ACCESS_KEYID;
+//   const secretKey = process.env.SECRET_KEYID;
+
+//   let s3Bucket = new AWS.S3({
+//     accessKeyId: userKey,
+//     secretAccessKey: secretKey,
+//     // Bucket: bucketName,
+//   });
+
+//   var params = {
+//     Bucket: bucketName,
+//     Key: filename,
+//     Body: data,
+//     ACL: "public-read",
+//   };
+//   s3Bucket.upload(params, (err, s3response) => {
+//     if (err) {
+//       console.log("Something went wrong", err);
+//     } else {
+//       console.log("Successfully uploaded", s3response);
+//     }
+//   });
+// }
+
+async function uploadToS3(data, filename) {
   const bucketName = "expensetrackerapp4321";
   const userKey = process.env.ACCESS_KEYID;
   const secretKey = process.env.SECRET_KEYID;
 
-  let s3Bucket = new AWS.S3({
+  const s3Bucket = new AWS.S3({
     accessKeyId: userKey,
     secretAccessKey: secretKey,
-    // Bucket: bucketName,
   });
 
-  s3Bucket.createBucket(() => {
-    var params = {
-      Bucket: bucketName,
-      Key: filename,
-      Body: data,
-    };
-    s3Bucket.upload(params, (err, s3Bucket) => {
-      if (err) {
-        console.log("Something went wrong", err);
-      } else {
-        console.log("Successfully uploaded", s3Bucket);
-      }
-    });
-  });
+  const params = {
+    Bucket: bucketName,
+    Key: filename,
+    Body: data,
+    ACL: "public-read",
+  };
+
+  try {
+    const s3response = await s3Bucket.upload(params).promise();
+    console.log("Successfully uploaded", s3response);
+    return s3response.Location; // Return the URL of the uploaded file
+  } catch (err) {
+    console.log("Something went wrong", err);
+  }
 }
 
 expenseRouter.get("/expense/download", isLogin, async (req, res) => {
@@ -180,8 +205,11 @@ expenseRouter.get("/expense/download", isLogin, async (req, res) => {
     const download = await userModel.findAll();
     console.log(download);
     const stringifiedExpenses = JSON.stringify(download);
-    const filename = "Expense.txt";
+    const userId = req.body.userId;
+    const filename = `Expense${userId}/${new Date()}.txt`;
+
     const fileUrl = uploadToS3(stringifiedExpenses, filename);
+    console.log(fileUrl);
     res.status(200).json({ fileUrl, success: true });
   } catch (error) {
     console.log(error);

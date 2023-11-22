@@ -90,6 +90,7 @@ function displayExpenses() {
         // Remove the expense from the expenses array
         expenses.splice(i, 1);
 
+        localStorage.removeItem("expenses");
         // Update the local storage
         localStorage.setItem("expenses", JSON.stringify(expenses));
 
@@ -193,7 +194,7 @@ async function download() {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.status === 201) {
+    if (response.status === 200) {
       // The backend is essentially sending a download link
       // which if we open in browser, the file would download
       var a = document.createElement("a");
@@ -304,6 +305,7 @@ document
 
           alert("You are a Premium user now");
 
+          localStorage.removeItem("Token");
           localStorage.setItem("Token", JSON.stringify(res.data.token));
 
           checkIsPremimumUser();
@@ -329,6 +331,8 @@ function logout(e) {
 
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("userDetails");
+    localStorage.removeItem("expenses");
+
     window.location.href = "./Login.html";
   }
 }

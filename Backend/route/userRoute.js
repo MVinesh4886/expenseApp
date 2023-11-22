@@ -89,7 +89,7 @@ userRouter.post("/login", async (req, res) => {
     if (existingUser) {
       // if the existing user is not verified
       if (!existingUser.isVerified) {
-        res.status(401).json({
+        return res.status(401).json({
           success: false,
           message: "Email not verified. Please verify your email first.",
         });
@@ -126,7 +126,7 @@ userRouter.post("/login", async (req, res) => {
       .json({ success: false, message: "Invalid login credentials" });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
