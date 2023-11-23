@@ -216,4 +216,23 @@ expenseRouter.get("/expense/download", isLogin, async (req, res) => {
   }
 });
 
+expenseRouter.get("/expense", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page);
+    const size = parseInt(req.query.size);
+    const pagination = await expenseModel.findAll({
+      limit: size,
+      offset: page * size || 0,
+    });
+
+    res.status(200).json({
+      success: true,
+      pagination,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = expenseRouter;
