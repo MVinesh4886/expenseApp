@@ -213,34 +213,82 @@ function showIsPremiumUser() {
   const buyPremiumButton = document.getElementById("razorpay");
   buyPremiumButton.remove();
   // Update the UI to show the premium user message
-  document.getElementById("message").textContent = "You are a premium user";
-
-  // Create and append the "Show Leaderboard" button
+  document.getElementById("message").textContent = "YOU ARE A PREMIUM USER NOW";
   const leaderboardButton = document.createElement("button");
   leaderboardButton.textContent = "Show Leaderboard";
+  leaderboardButton.className = "leaderboard";
   document.body.appendChild(leaderboardButton);
 
-  leaderboardButton.addEventListener("click", async () => {
-    // Handle the "Show Leaderboard" button click event
+  leaderboardButton.addEventListener("click", () => {
+    const screenWidth = window.innerWidth;
+    let page, size;
 
-    const token = JSON.parse(localStorage.getItem("userDetails")).token;
+    if (screenWidth >= 1024) {
+      // For big screens, restrict to certain pages
+      page = 0; // Change this to the desired page number
+      size = 10; // Change this to the desired number of expenses per page
+    } else {
+      // For small screens, restrict to certain page
+      page = 0;
+      size = 5;
+    }
 
-    const getLeaderBoard = await axios.get(
-      `http://localhost:8000/expense/showleaderboard`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(getLeaderBoard);
-    const leaderboardElement = document.getElementById("leaderboard");
-    leaderboardElement.innerHTML = "<h3>Leaderboard</h3>";
-    getLeaderBoard.data.forEach((userDetails) => {
-      leaderboardElement.innerHTML += `<div>id: ${userDetails.id} name: ${userDetails.name} total_cost: ${userDetails.total_cost}</div>`;
-    });
-    document.body.appendChild(leaderboardElement);
+    userLeaderboard(page, size);
+    leaderboardButton.remove();
   });
+
+  const userLeaderboard = async (page, size) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("userDetails")).token;
+
+      const getLeaderBoard = await axios.get(
+        `http://localhost:8000/expense/showleaderboard?page=${page}&size=${size}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const leaderboardElement = document.getElementById("leaderboard");
+      leaderboardElement.innerHTML = "<h3>Leaderboard</h3>";
+      leaderboardElement.className = "header";
+
+      getLeaderBoard.data.leaderboard.forEach((userDetails) => {
+        const userElement = document.createElement("div");
+        userElement.textContent = `id: ${userDetails.id} name: ${userDetails.name} total_cost: ${userDetails.total_cost}`;
+        leaderboardElement.appendChild(userElement);
+        userElement.className = "text";
+      });
+
+      // Add pagination buttons
+      const paginationContainer = document.getElementById("page");
+      paginationContainer.innerHTML = "";
+
+      // Previous button
+      if (page > 0) {
+        const previousButton = document.createElement("button");
+        previousButton.textContent = "Previous";
+        previousButton.className = "button";
+        previousButton.addEventListener("click", () => {
+          userLeaderboard(page - 1, size);
+        });
+        paginationContainer.appendChild(previousButton);
+      }
+
+      // Next button
+      const nextButton = document.createElement("button");
+      nextButton.textContent = "Next";
+      nextButton.className = "button";
+      nextButton.addEventListener("click", () => {
+        userLeaderboard(page + 1, size);
+      });
+      paginationContainer.appendChild(nextButton);
+    } catch (error) {
+      console.log(error);
+      // Handle the error or display a user-friendly error message
+    }
+  };
 }
 
 const user = JSON.parse(localStorage.getItem("userDetails")).token;
@@ -321,13 +369,11 @@ document
 
 checkIsPremimumUser();
 
+// Add event listener to the logout button
+document.getElementById("logout").addEventListener("click", logout);
 // Function to logout and redirect to the login page
 function logout(e) {
   e.preventDefault();
-  // // Clear the local storage
-  // localStorage.clear();
-  // // Redirect to the login page
-  // window.location.href = "./Login.html";
 
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("userDetails");
@@ -337,5 +383,133 @@ function logout(e) {
   }
 }
 
-// Add event listener to the logout button
-document.getElementById("logout").addEventListener("click", logout);
+// // Function to load expenses
+// const loadExpenses = async (page, size) => {
+//   try {
+//     const response = await axios.get(
+//       `http://localhost:8000/expense/?page=${page}&size=${size}`
+//     );
+//     const { success, pagination } = response.data;
+
+//     if (success) {
+//       // Clear previous expenses
+//       document.getElementById("expensesContainer").innerHTML = "";
+
+//       // Display expenses
+//       pagination.forEach((expense) => {
+//         const expenseElement = document.createElement("div");
+//         expenseElement.innerHTML = `
+//           Amount: ${expense.amount}
+//         Description: ${expense.description}
+//           Category: ${expense.category}
+//         `;
+//         document
+//           .getElementById("expensesContainer")
+//           .appendChild(expenseElement);
+//       });
+
+//       // Add pagination buttons
+//       const paginationContainer = document.getElementById("pagination");
+//       paginationContainer.innerHTML = "";
+
+//       // Previous button
+//       if (page > 0) {
+//         const previousButton = document.createElement("button");
+//         previousButton.innerText = "Previous";
+//         previousButton.addEventListener("click", () => {
+//           loadExpenses(page - 1, size);
+//         });
+//         paginationContainer.appendChild(previousButton);
+//       }
+
+//       // Next button
+//       const nextButton = document.createElement("button");
+//       nextButton.innerText = "Next";
+//       nextButton.addEventListener("click", () => {
+//         loadExpenses(page + 1, size);
+//       });
+//       paginationContainer.appendChild(nextButton);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// // Function to load expenses with pagination
+// const loadExpenses = async (page, size, id) => {
+//   try {
+//     const response = await axios.get(
+//       `http://localhost:8000/expense/${id}?page=${page}&size=${size}`
+//     );
+//     const { success, pagination } = response.data;
+
+//     if (success) {
+//       // Clear previous expenses
+//       document.getElementById("expensesContainer").innerHTML = "";
+
+//       // Display expenses
+//       pagination.rows.forEach((expense) => {
+//         const expenseElement = document.createElement("div");
+//         expenseElement.innerHTML = `
+//           Amount: ${expense.amount}
+//           Description: ${expense.description}
+//           Category: ${expense.category}
+//         `;
+//         document
+//           .getElementById("expensesContainer")
+//           .appendChild(expenseElement);
+//       });
+
+//       // Add pagination buttons
+//       const paginationContainer = document.getElementById("pagination");
+//       paginationContainer.innerHTML = "";
+
+//       // Previous button
+//       if (page > 0) {
+//         const previousButton = document.createElement("button");
+//         previousButton.innerText = "Previous";
+//         previousButton.addEventListener("click", () => {
+//           loadExpenses(page - 1, size, id);
+//         });
+//         paginationContainer.appendChild(previousButton);
+//       }
+
+//       // Next button
+//       const nextButton = document.createElement("button");
+//       nextButton.innerText = "Next";
+//       nextButton.addEventListener("click", () => {
+//         loadExpenses(page + 1, size, id);
+//       });
+//       paginationContainer.appendChild(nextButton);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// // Event listener for the button click
+// document
+//   .getElementById("loadExpensesButton")
+//   .addEventListener("click", async () => {
+//     const screenWidth = window.innerWidth;
+//     let page, size;
+
+//     if (screenWidth >= 1024) {
+//       // For big screens, restrict to certain pages
+//       page = 0; // Change this to the desired page number
+//       size = 10; // Change this to the desired number of expenses per page
+//     } else {
+//       // For small screens, restrict to certain page
+//       page = 0;
+//       size = 5;
+//     }
+//     try {
+//       // Make an API call to retrieve the user ID after login
+//       const response = await axios.get("http://localhost:8000/user"); // Replace with the appropriate API endpoint
+//       const { id } = response.data;
+
+//       loadExpenses(page, size, id);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   });

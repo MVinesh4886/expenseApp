@@ -8,18 +8,93 @@
       crossorigin="anonymous"
     />
     <title>Expense Tracker</title>
+    <style>
+      .logout {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin: 3px;
+        padding: 0;
+      }
+      #logout {
+        border-radius: 25px;
+        color: rgb(238, 227, 227);
+        background-color: rgb(234, 34, 34);
+      }
+      #download {
+        margin: 5px;
+        border-radius: 5px;
+      }
+      #message {
+        color: rgb(10, 10, 234);
+        margin: 4px;
+        text-align: center;
+        font-size: large;
+        font-family: Georgia, "Times New Roman", Times, serif;
+        font-weight: bold;
+        /* box-shadow: 0px 2px 0px 2px rgba(150, 142, 142, 0.2); */
+      }
+      .header {
+        text-align: center;
+      }
+      .leaderboard {
+        background-color: green;
+        color: white;
+        margin-left: 5px;
+        border-radius: 10px;
+      }
+
+      .input-field {
+        padding: 0px;
+        margin: 5px; /* Adjust the width value as needed */
+      }
+      #addExpense {
+        margin: 24px;
+        border-radius: 20px;
+        background-color: rgb(9, 223, 180);
+      }
+      .text {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+        margin: 3px;
+        padding: 5px;
+      }
+      .button {
+        background-color: rgb(20, 18, 19);
+        color: white;
+        margin: 3px;
+        border-radius: 20px;
+      }
+      .form {
+        display: block;
+        flex-direction: row;
+        text-align: center;
+        box-shadow: 1px 1px 0px rgba(168, 163, 163, 0.5);
+      }
+      body {
+        overflow: visible;
+      }
+    </style>
   </head>
   <body>
-    <h1 style="text-align: center">Expense Tracker</h1>
-    <div>
+    <div class="logout">
+      <button onclick="download()" id="download">Download</button>
+      <button id="logout">Logout</button>
+    </div>
+    <h1 class="header">Expense Tracker</h1>
+    <hr />
+
+    <div class="form">
       <label for="expenseAmount">Choose Expense Amount:</label>
-      <input type="text" id="expenseAmount" />
+      <input type="text" id="expenseAmount" class="input-field" />
 
       <label for="description">Choose Description:</label>
-      <input type="text" id="description" />
+      <input type="text" id="description" class="input-field" />
 
       <label for="category">Choose Category:</label>
-      <select id="category">
+      <select id="category" class="input-field">
         <option>Food</option>
         <option>Fuel</option>
         <option>Electricity</option>
@@ -33,12 +108,18 @@
       <p id="message"></p>
       <ul id="expenseList"></ul>
       <ul id="leaderboard"></ul>
-      <div id="pagination"></div>
     </div>
 
-    <button id="logout">Logout</button>
-    <button onclick="download()" id="download">Download</button>
+    <div id="page"></div>
 
+    <!-- <div id="expensesContainer"></div>
+    <div id="usersContainer"></div> -->
+    <div id="pagination"></div>
+
+    <div>
+      <!-- <button id="loadUsersButton">Users</button>
+      <button id="loadExpensesButton">Expenses</button> -->
+    </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
     <script src="./Expense.js"></script>

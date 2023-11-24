@@ -123,12 +123,41 @@ expenseRouter.delete("/expense/delete/:id", isLogin, async (req, res) => {
   }
 });
 
+// expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
+//   try {
+//     const leaderboard = await userModel.findAll({
+//       attributes: [
+//         "id",
+//         "name",
+//         [sequelize.fn("sum", sequelize.col("expenses.amount")), "total_cost"],
+//       ],
+//       include: [
+//         {
+//           model: expenseModel,
+//           attributes: [],
+//         },
+//       ],
+//       group: ["user.id"],
+//       order: [["total_cost", "DESC"]],
+//     });
+//     console.log(leaderboard);
+//     res.json(leaderboard);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "internal server error" });
+//   }
+// });
+
 expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
+
     const leaderboard = await userModel.findAll({
       attributes: [
         "id",
         "name",
+
         [sequelize.fn("sum", sequelize.col("expenses.amount")), "total_cost"],
       ],
       include: [
@@ -140,8 +169,15 @@ expenseRouter.get("/expense/showleaderboard", isLogin, async (req, res) => {
       group: ["user.id"],
       order: [["total_cost", "DESC"]],
     });
-    console.log(leaderboard);
-    res.send(leaderboard);
+    // Calculate pagination values
+    const startIndex = page * size;
+    const endIndex = startIndex + size;
+    const paginatedLeaderboard = leaderboard.slice(startIndex, endIndex);
+
+    console.log(paginatedLeaderboard);
+    res.json({ leaderboard: paginatedLeaderboard });
+    // console.log(leaderboard);
+    // res.json({ leaderboard });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "internal server error" });
@@ -216,13 +252,22 @@ expenseRouter.get("/expense/download", isLogin, async (req, res) => {
   }
 });
 
-expenseRouter.get("/expense", async (req, res) => {
+expenseRouter.get("/expense/:id", async (req, res) => {
   try {
-    const page = parseInt(req.query.page);
-    const size = parseInt(req.query.size);
-    const pagination = await expenseModel.findAll({
+    const { id } = req.params;
+    const user = await userModel.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
+
+    const pagination = await expenseModel.findAndCountAll({
+      where: { userId: id },
       limit: size,
-      offset: page * size || 0,
+      offset: page * size,
     });
 
     res.status(200).json({
@@ -231,7 +276,7 @@ expenseRouter.get("/expense", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
