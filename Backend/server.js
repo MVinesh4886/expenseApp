@@ -35,16 +35,16 @@ expenseModel.belongsTo(userModel, { foreignKey: "userId" });
 userModel.hasMany(orderModel, { foreignKey: "userId" });
 orderModel.belongsTo(orderModel, { foreignKey: "userId" });
 
+const PORT = process.env.PORT;
+
 db.sync()
   .then((result) => {
     // console.log(result);
+
+    app.listen(PORT, () => {
+      console.log(`Server is listening on  port ${PORT}`);
+    });
   })
   .catch((err) => {
     console.log(err);
   });
-
-const PORT = 8000;
-
-app.listen(PORT, () => {
-  console.log(`Server is listening on  port ${PORT}`);
-});

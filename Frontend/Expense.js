@@ -21,7 +21,11 @@ if (localStorage.userDetails) {
 if (localStorage.expenses) {
   expenses = JSON.parse(localStorage.expenses);
 }
-
+//
+//
+//
+//
+//create a new expense
 addExpenseButton.addEventListener("click", async function () {
   let expenseAmount = expenseInput.value;
   let description = descriptionInput.value;
@@ -61,17 +65,22 @@ addExpenseButton.addEventListener("click", async function () {
   descriptionInput.value = "";
   displayExpenses();
 });
-
+//
+//
+//
+//
+//After creating we display expenses, we need to create a new unordered list of Expenses, create delete and edit button with their functionality
 function displayExpenses() {
   expenseList.innerHTML = "";
 
   for (let i = 0; i < expenses.length; i++) {
     let expense = expenses[i];
     let listItem = document.createElement("li");
-    listItem.innerHTML = `Expense Amount: ${expense.amount}, Description: ${expense.description}, Category: ${expense.category}`;
+    listItem.innerHTML = `EXPENSE AMOUNT: ${expense.amount}, DESCRIPTION: ${expense.description}, CATEGORY: ${expense.category}`;
 
     let deleteButton = document.createElement("button");
     deleteButton.innerHTML = " Delete";
+    deleteButton.className = "Danger";
     deleteButton.addEventListener("click", async function () {
       try {
         const token = JSON.parse(localStorage.getItem("userDetails")).token;
@@ -103,6 +112,7 @@ function displayExpenses() {
 
     let editButton = document.createElement("button");
     editButton.textContent = " Edit";
+    editButton.className = "primary";
     editButton.addEventListener("click", function () {
       // Set the expense details as the current values of the input fields
       expenseInput.value = expense.amount;
@@ -112,6 +122,7 @@ function displayExpenses() {
       // Create a save button
       const saveButton = document.createElement("button");
       saveButton.textContent = "Save";
+      saveButton.className = "primary";
 
       // Add an event listener to the save button
       saveButton.addEventListener("click", async function () {
@@ -166,7 +177,11 @@ function displayExpenses() {
   }
 }
 displayExpenses();
-
+//
+//
+//
+//
+//how to parse the jwt in the frontend, copied this from the google
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
   var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -182,9 +197,11 @@ function parseJwt(token) {
 
   return JSON.parse(jsonPayload);
 }
-
-// document.getElementById("download").addEventListener("click", download);
-
+//
+//
+//
+//
+//download functionality for the aws s3 service
 async function download() {
   try {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
@@ -206,8 +223,11 @@ async function download() {
     console.log(error);
   }
 }
-
-//if the user is premium then we remove the buyPremium button and show that he is a premium user.
+//
+//
+//
+//
+// After a successful purchase, the user will be shown as a premium user
 function showIsPremiumUser() {
   // Remove the "Buy Premium" button
   const buyPremiumButton = document.getElementById("razorpay");
@@ -251,7 +271,7 @@ function showIsPremiumUser() {
       );
 
       const leaderboardElement = document.getElementById("leaderboard");
-      leaderboardElement.innerHTML = "<h3>Leaderboard</h3>";
+      leaderboardElement.innerHTML = "<h3><b>LEADERBOARD</b></h3>";
       leaderboardElement.className = "header";
 
       getLeaderBoard.data.leaderboard.forEach((userDetails) => {
@@ -286,7 +306,6 @@ function showIsPremiumUser() {
       paginationContainer.appendChild(nextButton);
     } catch (error) {
       console.log(error);
-      // Handle the error or display a user-friendly error message
     }
   };
 }
@@ -295,7 +314,10 @@ const user = JSON.parse(localStorage.getItem("userDetails")).token;
 const decodedUser = parseJwt(user);
 const userDetails = decodedUser.id;
 console.log(userDetails);
-
+//
+//
+//
+//
 //To check if the user is premium user or not.
 function checkIsPremimumUser() {
   const orderToken = JSON.parse(localStorage.getItem("Token"));
@@ -312,7 +334,10 @@ function checkIsPremimumUser() {
     }
   }
 }
-
+//
+//
+//
+//
 // for razor pay,
 document
   .getElementById("razorpay")
@@ -368,7 +393,10 @@ document
   });
 
 checkIsPremimumUser();
-
+//
+//
+//
+//
 // Add event listener to the logout button
 document.getElementById("logout").addEventListener("click", logout);
 // Function to logout and redirect to the login page
