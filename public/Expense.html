@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-      crossorigin="anonymous"
-    />
     <title>Expense Tracker</title>
+    <!-- <script
+      src="https://checkout.razorpay.com/v1/checkout.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   </head>
-  <link rel="stylesheet" href="./Expense.css" />
+  <link rel="stylesheet" type="text/css" href="./Expense.css" />
   <body>
     <div class="top">
       <hr />
       <br />
       <div class="nav">
-        <button onclick="download()" id="download">Download</button>
+        <button id="download">Download</button>
         <button id="logout">Logout</button>
       </div>
     </div>
@@ -25,13 +24,13 @@
 
     <div class="form">
       <label for="expenseAmount">Choose Expense Amount:</label>
-      <input type="text" id="expenseAmount" class="input-field" />
+      <input type="text" id="expenseAmount" class="field" />
 
       <label for="description">Choose Description:</label>
-      <input type="text" id="description" class="input-field" />
+      <input type="text" id="description" class="field" />
 
       <label for="category">Choose Category:</label>
-      <select id="category" class="input-field">
+      <select id="category" class="field">
         <option>Food</option>
         <option>Fuel</option>
         <option>Electricity</option>
@@ -51,8 +50,11 @@
 
     <!-- <div id="pagination"></div> -->
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
+    <script
+      src="https://checkout.razorpay.com/v1/checkout.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="./Expense.js"></script>
   </body>
 </html>

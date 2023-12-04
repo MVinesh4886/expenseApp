@@ -7,7 +7,8 @@
   </head>
   <link rel="stylesheet" href="./Register.css" />
   <body>
-    <form onsubmit="registerUser(event)">
+    <form id="registerForm">
+      <!--onsubmit="registerUser(event)" -->
       <div class="form">
         <h1 id="register">REGISTER USER</h1>
         <div>
@@ -60,7 +61,8 @@
 
         try {
           const response = await axios.post(
-            "http://localhost:8000/registerUser",
+            // "http://54.145.12.139:8000/registerUser",
+            "http://localhost:8000/user/registerUser",
             {
               name,
               emailId,
@@ -80,6 +82,13 @@
           alert("Request failed with status code 400");
         }
       }
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevent form submission
+
+          await loginUser(event); // Call the loginUser function
+        });
     </script>
   </body>
 </html>

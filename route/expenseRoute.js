@@ -12,17 +12,17 @@ const {
 } = require("../controller/expenseController");
 const expenseRouter = express.Router();
 
-expenseRouter.post("/expense/create", isLogin, CreateExpense);
+expenseRouter.post("/create", isLogin, CreateExpense);
 
-expenseRouter.get("/expense/get", isLogin, GetAllExpense);
+expenseRouter.get("/get", isLogin, GetAllExpense);
 
-expenseRouter.get("/expense/getSingle/:id", isLogin, GetSingleExpense);
+expenseRouter.get("/getSingle/:id", isLogin, GetSingleExpense);
 
-expenseRouter.put("/expense/put/:id", isLogin, UpdateExpense);
+expenseRouter.put("/put/:id", isLogin, UpdateExpense);
 
-expenseRouter.delete("/expense/delete/:id", isLogin, DeleteExpense);
+expenseRouter.delete("/delete/:id", isLogin, DeleteExpense);
 
-expenseRouter.get("/expense/showleaderboard", isLogin, ShowLeaderBoard);
+expenseRouter.get("/showleaderboard", isLogin, ShowLeaderBoard);
 
 // function uploadToS3(data, filename) {
 //   const bucketName = "expensetrackerapp4321";
@@ -76,7 +76,7 @@ expenseRouter.get("/expense/showleaderboard", isLogin, ShowLeaderBoard);
 //   }
 // }
 
-expenseRouter.get("/expense/download", isLogin, Download);
+expenseRouter.get("/download", isLogin, Download);
 
 // expenseRouter.get("/expense/:id", async (req, res) => {
 //   try {

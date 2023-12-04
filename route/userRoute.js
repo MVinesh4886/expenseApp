@@ -9,7 +9,7 @@ const {
   GetAllUsers,
   GetSingleUser,
   DeleteUser,
-} = require("../../Backend/controller/userController");
+} = require("../controller/userController");
 
 // Register User route
 userRouter.post("/registerUser", RegisterUser);
@@ -27,7 +27,7 @@ userRouter.post("/forgotPassword", ForgotPassword);
 // Reset password
 userRouter.post("/resetPassword", ResetPassword);
 
-userRouter.get("/registerUser/:id", GetSingleUser);
+// userRouter.get("/registerUser/:id", GetSingleUser);
 
 userRouter.delete("/User/:id", DeleteUser);
 

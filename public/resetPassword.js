@@ -7,10 +7,13 @@ resetPasswordForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("newPassword").value;
 
   try {
-    const response = await axios.post("http://localhost:8000/resetPassword", {
-      emailId,
-      password,
-    });
+    const response = await axios.post(
+      "http://localhost:8000/user/resetPassword",
+      {
+        emailId,
+        password,
+      }
+    );
 
     console.log(response);
     alert("Password was reset successfully");

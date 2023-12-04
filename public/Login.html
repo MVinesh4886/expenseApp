@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Login</title>
+  </head>
+
+  <link rel="stylesheet" type="text/css" href="./Login.css" />
+  <body>
+    <form id="loginForm">
+      <!--onsubmit="loginUser(event)"-->
+      <div class="form">
+        <h1 id="login">LOGIN USER</h1>
+
+        <div>
+          <label class="label" for="email">REGISTERED EMAIL</label>
+          <input
+            class="input-field"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter email"
+            required
+          />
+        </div>
+        <div>
+          <label class="label" for="password">PASSWORD</label>
+          <input
+            class="input-field"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter Password"
+            required
+          />
+        </div>
+        <div class="bottom">
+          <button type="submit" id="loginBtn">LOGIN NOW</button>
+          <button type="button" id="forgotPassword">FORGOT PASSWORD ?</button>
+        </div>
+      </div>
+    </form>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="Login.js"></script>
+  </body>
+</html>

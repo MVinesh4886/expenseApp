@@ -191,7 +191,8 @@ const ForgotPassword = async (req, res) => {
       from: "vineshkrishna26@gmail.com",
       to: emailId,
       subject: "Reset Your Password",
-      text: `http://127.0.0.1:5501/frontend/ResetPassword.html`,
+      // text: `http://127.0.0.1:5501/frontend/ResetPassword.html`,
+      text: `http://localhost:8000/ResetPassword.html`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

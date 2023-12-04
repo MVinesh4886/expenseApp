@@ -1,6 +1,7 @@
-const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
+
+const express = require("express");
 const userModel = require("./model/userModel");
 const expenseModel = require("./model/expenseModel");
 const db = require("./config/database");
@@ -8,26 +9,33 @@ const userRouter = require("./route/userRoute");
 const expenseRouter = require("./route/expenseRoute");
 const orderRoute = require("./route/orderRoute");
 const orderModel = require("./model/orderModel");
-const helmet = require("helmet");
-const compression = require("compression");
+const path = require("path");
+// const helmet = require("helmet");
+// const compression = require("compression");
 
 const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
-app.use(helmet());
-app.use(compression());
+// app.use(helmet());
+// app.use(compression());
+
 app.use(
   cors({
-    origin: "http://127.0.0.1:5501",
+    origin: "http://localhost:8000",
     methods: ["GET", "POST", "DELETE", "PUT"],
   })
 );
 
-app.use(expenseRouter);
-app.use(userRouter);
-app.use(orderRoute);
+app.use("/expense", expenseRouter);
+app.use("/user", userRouter);
+app.use("/order", orderRoute);
+
+app.use((req, res) => {
+  // console.log(__dirname);
+  res.sendFile(path.join(__dirname + `/public/${req.url}`));
+});
 
 userModel.hasMany(expenseModel, { foreignKey: "userId" });
 expenseModel.belongsTo(userModel, { foreignKey: "userId" });

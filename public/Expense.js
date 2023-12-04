@@ -223,6 +223,12 @@ async function download() {
     console.log(error);
   }
 }
+
+document.getElementById("download").addEventListener("click", async (event) => {
+  event.preventDefault(); // Prevent form submission
+
+  await download(); // Call the loginUser function
+});
 //
 //
 //
@@ -314,10 +320,7 @@ const user = JSON.parse(localStorage.getItem("userDetails")).token;
 const decodedUser = parseJwt(user);
 const userDetails = decodedUser.id;
 console.log(userDetails);
-//
-//
-//
-//
+
 //To check if the user is premium user or not.
 function checkIsPremimumUser() {
   const orderToken = JSON.parse(localStorage.getItem("Token"));
@@ -348,7 +351,7 @@ document
       const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
       const response = await axios.get(
-        `http://localhost:8000/purchasePremium`,
+        `http://localhost:8000/order/purchasePremium`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -363,7 +366,7 @@ document
         orderId: response.data.orderId,
         handler: async function () {
           const res = await axios.post(
-            "http://localhost:8000/updateTransactionStatus",
+            "http://localhost:8000/order/updateTransactionStatus",
             {
               orderId: options.orderId,
               paymentId: response.razorpay_paymentId,
@@ -393,10 +396,7 @@ document
   });
 
 checkIsPremimumUser();
-//
-//
-//
-//
+
 // Add event listener to the logout button
 document.getElementById("logout").addEventListener("click", logout);
 // Function to logout and redirect to the login page
