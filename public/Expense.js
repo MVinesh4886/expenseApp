@@ -42,7 +42,7 @@ addExpenseButton.addEventListener("click", async function () {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
     const response = await axios.post(
-      "http://localhost:8000/expense/create",
+      "http://54.145.12.139:8000/expense/create",
       expense,
       {
         headers: {
@@ -85,7 +85,7 @@ function displayExpenses() {
       try {
         const token = JSON.parse(localStorage.getItem("userDetails")).token;
         const deleteResponse = await axios.delete(
-          `http://localhost:8000/expense/delete/${expense.id}`,
+          `http://54.145.12.139:8000/expense/delete/${expense.id}`,
           {
             headers: {
               Authorization: `Bearer ${token} `,
@@ -140,7 +140,7 @@ function displayExpenses() {
           const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
           const response = await axios.put(
-            `http://localhost:8000/expense/put/${expense.id}`,
+            `http://54.145.12.139:8000/expense/put/${expense.id}`,
             expense,
             {
               headers: {
@@ -206,11 +206,14 @@ async function download() {
   try {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
-    const response = await axios.get(`http://localhost:8000/expense/download`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `http://54.145.12.139:8000/expense/download`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (response.status === 200) {
       // The backend is essentially sending a download link
       // which if we open in browser, the file would download
@@ -268,7 +271,8 @@ function showIsPremiumUser() {
       const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
       const getLeaderBoard = await axios.get(
-        `http://localhost:8000/expense/showleaderboard?page=${page}&size=${size}`,
+        // `http://localhost:8000/expense/showleaderboard?page=${page}&size=${size}`,
+        `http://54.145.12.139:8000/expense/showleaderboard?page=${page}&size=${size}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -351,7 +355,7 @@ document
       const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
       const response = await axios.get(
-        `http://localhost:8000/order/purchasePremium`,
+        `http://54.145.12.139:8000/order/purchasePremium`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -366,7 +370,7 @@ document
         orderId: response.data.orderId,
         handler: async function () {
           const res = await axios.post(
-            "http://localhost:8000/order/updateTransactionStatus",
+            "http://54.145.12.139:8000/order/updateTransactionStatus",
             {
               orderId: options.orderId,
               paymentId: response.razorpay_paymentId,
