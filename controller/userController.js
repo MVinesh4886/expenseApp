@@ -45,7 +45,7 @@ const RegisterUser = async (req, res) => {
       from: "vineshkrishna26@gmail.com",
       to: emailId,
       subject: "Email Verification",
-      text: `Please verify your email by clicking the following link: http://54.145.12.139:8000/verifyEmail/${Token}`,
+      text: `Please verify your email by clicking the following link: http://54.145.12.139:8000/user/verifyEmail/${Token}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
