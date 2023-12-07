@@ -32,7 +32,6 @@ app.use("/user", userRouter);
 app.use("/order", orderRoute);
 
 app.use((req, res) => {
-  // console.log(__dirname);
   res.sendFile(path.join(__dirname + `/public/${req.url}`));
 });
 
