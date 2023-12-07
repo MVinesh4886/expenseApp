@@ -4,7 +4,7 @@ async function loginUser(event) {
   const password = document.getElementById("password").value;
 
   try {
-    const response = await axios.post("http://54.145.12.139/user/login", {
+    const response = await axios.post("http://54.145.12.139:8000/user/login", {
       emailId,
       password,
     });
