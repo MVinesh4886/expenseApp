@@ -4,7 +4,7 @@ async function loginUser(event) {
   const password = document.getElementById("password").value;
 
   try {
-    const response = await axios.post("http://54.145.12.139:8000/user/login", {
+    const response = await axios.post("http://54.145.12.139/user/login", {
       emailId,
       password,
     });
@@ -58,7 +58,7 @@ forgotPasswordButton.addEventListener("click", async () => {
   try {
     // Send a POST request to the backend to initiate the password reset process
     const response = await axios.post(
-      "http://54.145.12.139:8000/user/forgotPassword",
+      "http://54.145.12.139/user/forgotPassword",
       {
         emailId,
       }
