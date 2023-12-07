@@ -45,7 +45,7 @@ const RegisterUser = async (req, res) => {
       from: "vineshkrishna26@gmail.com",
       to: emailId,
       subject: "Email Verification",
-      text: `Please verify your email by clicking the following link: http://54.145.12.139/user/verifyEmail/${Token}`,
+      text: `Please verify your email by clicking the following link: http://54.145.12.139:8000/user/verifyEmail/${Token}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -193,7 +193,7 @@ const ForgotPassword = async (req, res) => {
       subject: "Reset Your Password",
       // text: `http://127.0.0.1:5501/frontend/ResetPassword.html`,
       // text: `http://localhost:8000/ResetPassword.html`,
-      text: `http://54.145.12.139/ResetPassword.html`,
+      text: `http://54.145.12.139:8000/ResetPassword.html`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
