@@ -20,9 +20,16 @@ app.use(express.json());
 // app.use(helmet());
 // app.use(compression());
 
+// app.use(
+//   cors({
+//     origin: "http://localhost:8000",
+//     methods: ["GET", "POST", "DELETE", "PUT"],
+//   })
+// );
+
 app.use(
   cors({
-    origin: "http://localhost:8000",
+    origin: "http://54.145.12.139:8000",
     methods: ["GET", "POST", "DELETE", "PUT"],
   })
 );
