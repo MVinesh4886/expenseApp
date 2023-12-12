@@ -24,6 +24,12 @@ const CreateExpense = async (req, res) => {
       },
       { transaction: t }
     );
+
+    await expenseModel.update(
+      { userId },
+      { where: { id: newTracker.id }, transaction: t }
+    );
+
     await t.commit();
     console.log(newTracker);
     res.status(200).json({
@@ -97,6 +103,14 @@ const DeleteExpense = async (req, res) => {
     // using, the expenseId we delete the expense
     const expense = await expenseModel.findByPk(expenseId);
 
+    const deletedTracker = await expenseModel.destroy({
+      where: { id: expenseId },
+    });
+
+    if (deletedTracker === 0) {
+      return res.status(500).json({ message: "tracker not found" });
+    }
+
     //Since we have deleted the expense, Update the totalExpenses in userModel
     const userId = expense.userId;
     const amount = expense.amount;
@@ -104,13 +118,6 @@ const DeleteExpense = async (req, res) => {
     const totalExpenses = Number(user.totalExpenses) - Number(amount);
     await user.update({ totalExpenses });
 
-    const deletedTracker = await expenseModel.destroy({
-      where: { id: expenseId, userId: userId },
-    });
-
-    if (deletedTracker === 0) {
-      return res.status(500).json({ message: "tracker not found" });
-    }
     res.status(200).json({
       success: true,
       data: "tracker has been deleted",
