@@ -42,7 +42,7 @@ addExpenseButton.addEventListener("click", async function () {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
     const response = await axios.post(
-      "http://54.145.12.139:8000/expense/create",
+      `http://54.145.12.139:8000/expense/create/${userId}`,
       expense,
       {
         headers: {
@@ -85,7 +85,7 @@ function displayExpenses() {
       try {
         const token = JSON.parse(localStorage.getItem("userDetails")).token;
         const deleteResponse = await axios.delete(
-          `http://54.145.12.139:8000/expense/delete/${expense.id}`,
+          `http://54.145.12.139:8000/expense/delete/${expense.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token} `,
@@ -140,7 +140,7 @@ function displayExpenses() {
           const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
           const response = await axios.put(
-            `http://54.145.12.139:8000/expense/put/${expense.id}`,
+            `http://54.145.12.139:8000/expense/put/${expense.userId}`,
             expense,
             {
               headers: {
@@ -207,7 +207,7 @@ async function download() {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
     const response = await axios.get(
-      `http://54.145.12.139:8000/expense/download`,
+      `http://54.145.12.139:8000/expense/download/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -370,7 +370,7 @@ document
         orderId: response.data.orderId,
         handler: async function () {
           const res = await axios.post(
-            "http://54.145.12.139:8000/order/updateTransactionStatus",
+            `http://54.145.12.139:8000/order/updateTransactionStatus/${userId}`,
             {
               orderId: options.orderId,
               paymentId: response.razorpay_paymentId,

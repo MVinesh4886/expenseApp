@@ -1,17 +1,17 @@
 const expenseModel = require("../model/expenseModel");
-const isLogin = require("../middleware/Auth");
 const userModel = require("../model/userModel");
 const sequelize = require("sequelize");
 const db = require("../config/database");
 const AWS = require("aws-sdk");
 
 const CreateExpense = async (req, res) => {
+  //
   const t = await db.transaction();
   try {
     const { amount, description, category } = req.body;
-    const userId = req.body.userId; // Assuming the userId is passed as a parameter
 
     // Update totalExpenses in userModel
+    const userId = req.params.userId;
     const user = await userModel.findByPk(userId);
     const totalExpenses = Number(user.totalExpenses) + Number(amount);
     await user.update({ totalExpenses });
@@ -21,7 +21,6 @@ const CreateExpense = async (req, res) => {
         amount,
         description,
         category,
-        userId,
       },
       { transaction: t }
     );
@@ -53,7 +52,7 @@ const GetAllExpense = async (req, res) => {
 
 const GetSingleExpense = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.params.userId;
     const tracker = await expenseModel.findAll({ where: { userId: userId } });
     if (!tracker) {
       return res.status(404).json({ message: "tracker not found" });
@@ -92,14 +91,15 @@ const UpdateExpense = async (req, res) => {
 
 const DeleteExpense = async (req, res) => {
   try {
-    const expenseId = req.params.id; // Get the expenseId from the URL parameter
-    const userId = req.body.userId; // Get the userId from the request body
+    //To delete the expense, we extract the id from route using req.params object.
+    const expenseId = req.params.id;
 
-    // Get the amount of the expense to be deleted
+    // using, the expenseId we delete the expense
     const expense = await expenseModel.findByPk(expenseId);
-    const amount = expense.amount;
 
-    // Update totalExpenses in userModel
+    //Since we have deleted the expense, Update the totalExpenses in userModel
+    const userId = expense.userId;
+    const amount = expense.amount;
     const user = await userModel.findByPk(userId);
     const totalExpenses = Number(user.totalExpenses) - Number(amount);
     await user.update({ totalExpenses });
@@ -107,6 +107,7 @@ const DeleteExpense = async (req, res) => {
     const deletedTracker = await expenseModel.destroy({
       where: { id: expenseId, userId: userId },
     });
+
     if (deletedTracker === 0) {
       return res.status(500).json({ message: "tracker not found" });
     }
@@ -141,7 +142,7 @@ const ShowLeaderBoard = async (req, res) => {
       group: ["user.id"],
       order: [["total_cost", "DESC"]],
     });
-    // Calculate pagination values
+
     const startIndex = page * size;
     const endIndex = startIndex + size;
     const paginatedLeaderboard = leaderboard.slice(startIndex, endIndex);
@@ -187,7 +188,7 @@ const Download = async (req, res) => {
     const download = await userModel.findAll();
     console.log(download);
     const stringifiedExpenses = JSON.stringify(download);
-    const userId = req.body.userId;
+    const userId = req.params.userId;
     const filename = `Expense${userId}/${new Date()}.txt`;
 
     const fileUrl = uploadToS3(stringifiedExpenses, filename);

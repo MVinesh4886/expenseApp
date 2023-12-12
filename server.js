@@ -9,23 +9,12 @@ const expenseRouter = require("./route/expenseRoute");
 const orderRoute = require("./route/orderRoute");
 const orderModel = require("./model/orderModel");
 const path = require("path");
-// const helmet = require("helmet");
-// const compression = require("compression");
 
 const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
-// app.use(helmet());
-// app.use(compression());
-
-// app.use(
-//   cors({
-//     origin: "http://localhost:8000",
-//     methods: ["GET", "POST", "DELETE", "PUT"],
-//   })
-// );
 
 app.use(
   cors({
