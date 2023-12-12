@@ -330,9 +330,9 @@ function checkIsPremimumUser() {
   const orderToken = JSON.parse(localStorage.getItem("Token"));
   if (orderToken) {
     const decodedToken = parseJwt(orderToken);
-    console.log(decodedToken);
-    console.log(decodedToken.id.isPremiumUser);
-    console.log(decodedToken.id.id);
+    // console.log(decodedToken);
+    // console.log(decodedToken.id.isPremiumUser);
+    // console.log(decodedToken.id.id);
     if (
       decodedToken.id.isPremiumUser === true &&
       userDetails === decodedToken.id.id

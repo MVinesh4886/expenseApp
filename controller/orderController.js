@@ -40,6 +40,7 @@ const GetPurchasePremium = async (req, res) => {
 const UpdateTransactionStatus = async (req, res) => {
   try {
     const { paymentId, orderId } = req.body;
+    const userId = req.params.userId;
     const findOrder = await orderModel.findOne({ where: { orderId } });
     await findOrder.update({
       paymentId,
@@ -48,7 +49,6 @@ const UpdateTransactionStatus = async (req, res) => {
       status: "SUCCESSFUL",
     });
 
-    const userId = req.params.userId;
     const user = await userModel.findByPk(userId);
     const updatedUser = await user.update({ isPremiumUser: true });
 
