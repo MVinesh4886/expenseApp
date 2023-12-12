@@ -42,7 +42,7 @@ addExpenseButton.addEventListener("click", async function () {
     const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
     const response = await axios.post(
-      `http://54.145.12.139:8000/expense/create/${userId}`,
+      `http://54.145.12.139:8000/expense/create/${expense.userId}`,
       expense,
       {
         headers: {
@@ -85,7 +85,7 @@ function displayExpenses() {
       try {
         const token = JSON.parse(localStorage.getItem("userDetails")).token;
         const deleteResponse = await axios.delete(
-          `http://54.145.12.139:8000/expense/delete/${expense.userId}`,
+          `http://54.145.12.139:8000/expense/delete/${expense.id}`,
           {
             headers: {
               Authorization: `Bearer ${token} `,
@@ -140,7 +140,7 @@ function displayExpenses() {
           const token = JSON.parse(localStorage.getItem("userDetails")).token;
 
           const response = await axios.put(
-            `http://54.145.12.139:8000/expense/put/${expense.userId}`,
+            `http://54.145.12.139:8000/expense/put/${expense.id}`,
             expense,
             {
               headers: {

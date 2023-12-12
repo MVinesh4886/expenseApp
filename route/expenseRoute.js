@@ -20,7 +20,7 @@ expenseRouter.get("/getSingle/:userId", isLogin, GetSingleExpense);
 
 expenseRouter.put("/put/:id", isLogin, UpdateExpense);
 
-expenseRouter.delete("/delete/:userId", isLogin, DeleteExpense);
+expenseRouter.delete("/delete/:id", isLogin, DeleteExpense);
 
 expenseRouter.get("/showleaderboard", isLogin, ShowLeaderBoard);
 
